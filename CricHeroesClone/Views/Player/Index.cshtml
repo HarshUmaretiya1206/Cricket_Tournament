@@ -1,0 +1,32 @@
+﻿@model IEnumerable<CricHeroesClone.Models.Player>
+
+@{
+    ViewData["Title"] = "Players";
+}
+
+<h2>Players</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">+ Add Player</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Team</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Role</td>
+                <td>@player.TeamName</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@player.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

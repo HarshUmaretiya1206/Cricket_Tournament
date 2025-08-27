@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Live Viewer";
+}
+<h2>Live Viewer</h2>
+<p>Match ID: @ViewBag.MatchId</p>
+<p>Score: <span id="score">@ViewBag.ScoreA - @ViewBag.ScoreB</span></p>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        const matchId = '@ViewBag.MatchId';
+        const conn = new signalR.HubConnectionBuilder().withUrl('/hubs/live').build();
+        conn.on('ReceiveUpdate', (payload) => {
+          // fetch updated score
+          fetch('/Match/GetScore?matchId=' + matchId).then(r=>r.json()).then(js=>{
+              document.getElementById('score').innerText = js.scoreA + ' - ' + js.scoreB;
+          });
+        });
+        conn.start().then(()=> conn.invoke('JoinMatch', matchId));
+    </script>
+}

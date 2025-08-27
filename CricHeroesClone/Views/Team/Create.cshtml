@@ -1,0 +1,16 @@
+﻿@model CricHeroesClone.Models.Team
+@{
+    ViewBag.Title = "Create Team";
+}
+<form asp-action="Create">
+    <div class="mb-3">
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="TournamentId"></label>
+        <select asp-for="TournamentId" asp-items="ViewBag.Tournaments" class="form-control"></select>
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

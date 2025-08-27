@@ -1,0 +1,30 @@
+﻿@model IEnumerable<CricHeroesClone.Models.Score>
+
+@{
+    ViewData["Title"] = "Scores";
+}
+
+<h2>Scores</h2>
+<a asp-action="Update" asp-route-matchId="@ViewBag.MatchId" class="btn btn-primary mb-3">+ Update Score</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Team</th>
+            <th>Runs</th>
+            <th>Wickets</th>
+            <th>Overs</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in Model)
+        {
+            <tr>
+                <td>@s.TeamName</td>
+                <td>@s.Runs</td>
+                <td>@s.Wickets</td>
+                <td>@s.Overs</td>
+            </tr>
+        }
+    </tbody>
+</table>

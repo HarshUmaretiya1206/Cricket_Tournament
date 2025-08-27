@@ -1,0 +1,27 @@
+﻿@model CricHeroesClone.Models.Score
+
+@{
+    ViewData["Title"] = "Update Score";
+}
+
+<h2>Update Score</h2>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" asp-for="MatchId" />
+    <input type="hidden" asp-for="TeamId" />
+
+    <div class="mb-3">
+        <label>Runs</label>
+        <input asp-for="Runs" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Wickets</label>
+        <input asp-for="Wickets" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Overs</label>
+        <input asp-for="Overs" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" asp-route-matchId="@Model.MatchId" class="btn btn-secondary">Cancel</a>
+</form>

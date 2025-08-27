@@ -1,0 +1,38 @@
+﻿@model IEnumerable<CricHeroesClone.Models.Match>
+
+@{
+    ViewData["Title"] = "Matches";
+}
+
+<h2>Matches</h2>
+<a asp-action="Create" class="btn btn-primary mb-3">+ Add Match</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tournament</th>
+            <th>Team A</th>
+            <th>Team B</th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>Result</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.TournamentName</td>
+                <td>@m.TeamAName</td>
+                <td>@m.TeamBName</td>
+                <td>@m.MatchDate?.ToShortDateString()</td>
+                <td>@m.Venue</td>
+                <td>@m.Result</td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@m.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

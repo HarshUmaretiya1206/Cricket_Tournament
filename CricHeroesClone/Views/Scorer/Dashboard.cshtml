@@ -1,0 +1,16 @@
+﻿@model IEnumerable<CricHeroesClone.Models.Match>
+<h2>Scorer Dashboard</h2>
+<table class="table">
+    <thead><tr><th>Match</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.TeamAName vs @m.TeamBName</td>
+                <td>@m.MatchDate</td>
+                <td><a class="btn btn-sm btn-primary" asp-action="Score" asp-route-matchId="@m.Id">Score</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+

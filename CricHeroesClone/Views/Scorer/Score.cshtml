@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Score Match";
+}
+<h2>Score Match</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form method="post" asp-action="RecordBall">
+    <input type="hidden" name="matchId" value="@ViewBag.MatchId" />
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label>Batsman ID</label>
+            <input name="batsmanId" type="number" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label>Bowler ID</label>
+            <input name="bowlerId" type="number" class="form-control" />
+        </div>
+        <div class="col-md-2 mb-3">
+            <label>Runs</label>
+            <input name="runs" type="number" class="form-control" />
+        </div>
+        <div class="col-md-2 mb-3">
+            <label>Wicket?</label>
+            <select name="isWicket" class="form-select">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+            </select>
+        </div>
+    </div>
+    <button class="btn btn-success">Record Ball</button>
+</form>
