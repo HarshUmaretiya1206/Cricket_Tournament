@@ -1,34 +1,162 @@
 ﻿@model IEnumerable<CricHeroesClone.Models.Tournament>
-
 @{
     ViewData["Title"] = "Tournaments";
+    Layout = "_Layout";
+    var userRole = Context.Session.GetString("UserRole");
+    var isAdmin = userRole == "Admin";
 }
 
-<h2>Tournaments</h2>
-<a asp-action="Create" class="btn btn-primary mb-3">+ Add Tournament</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-trophy text-warning"></i> Tournaments
+            </h1>
+        </div>
+    </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Tournament ID</th>
-            <th>Name</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var t in Model)
-        {
-            <tr>
-                <td>@t.Id</td>
-                <td>@t.Name</td>
-                <td>@t.StartDate?.ToShortDateString()</td>
-                <td>@t.EndDate?.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@t.Id" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Tournament Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Total Tournaments</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournaments Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-list"></i> All Tournaments
+                    </h6>
+                    @if (isAdmin)
+                    {
+                        <a href="@Url.Action("Create", "Tournament")" class="btn btn-warning btn-sm">
+                            <i class="fas fa-plus"></i> Add New Tournament
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag"></i> ID</th>
+                                        <th><i class="fas fa-trophy"></i> Tournament Name</th>
+                                        <th><i class="fas fa-calendar"></i> Start Date</th>
+                                        <th><i class="fas fa-calendar-check"></i> End Date</th>
+                                        <th><i class="fas fa-clock"></i> Duration</th>
+                                        <th><i class="fas fa-cogs"></i> Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var tournament in Model)
+                                    {
+                                        <tr>
+                                            <td>@tournament.Id</td>
+                                            <td>
+                                                <strong>@tournament.Name</strong>
+                                            </td>
+                                            <td>
+                                                @if (tournament.StartDate.HasValue)
+                                                {
+                                                    <span class="badge badge-success">@tournament.StartDate.Value.ToString("MMM dd, yyyy")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">TBD</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (tournament.EndDate.HasValue)
+                                                {
+                                                    <span class="badge badge-info">@tournament.EndDate.Value.ToString("MMM dd, yyyy")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">TBD</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (tournament.StartDate.HasValue && tournament.EndDate.HasValue)
+                                                {
+                                                    var duration = tournament.EndDate.Value - tournament.StartDate.Value;
+                                                    <span class="text-muted">@duration.Days days</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("Index", "Team")" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-flag"></i> Teams
+                                                    </a>
+                                                    <a href="@Url.Action("Index", "Match")" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-gamepad"></i> Matches
+                                                    </a>
+                                                    @if (isAdmin)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "Tournament", new { id = tournament.Id })" class="btn btn-warning btn-sm">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        <form method="post" action="@Url.Action("Delete", "Tournament")" style="display: inline;" 
+                                                              onsubmit="return confirm('Are you sure you want to delete this tournament?')">
+                                                            <input type="hidden" name="id" value="@tournament.Id" />
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                            <h5>No Tournaments Available</h5>
+                            <p class="text-muted">There are currently no tournaments in the system.</p>
+                            @if (isAdmin)
+                            {
+                                <a href="@Url.Action("Create", "Tournament")" class="btn btn-warning">
+                                    <i class="fas fa-plus"></i> Create First Tournament
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Tournaments page loaded');
+        });
+    </script>
+}

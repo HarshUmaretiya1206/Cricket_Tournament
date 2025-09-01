@@ -1,0 +1,73 @@
+@model CricHeroesClone.Models.Tournament
+@{
+    ViewData["Title"] = "Edit Tournament";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-edit text-warning"></i> Edit Tournament
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-trophy"></i> Update Tournament Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group">
+                            <label asp-for="Name" class="form-label">
+                                <i class="fas fa-trophy"></i> Tournament Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter tournament name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StartDate" class="form-label">
+                                <i class="fas fa-calendar"></i> Start Date
+                            </label>
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="EndDate" class="form-label">
+                                <i class="fas fa-calendar-check"></i> End Date
+                            </label>
+                            <input asp-for="EndDate" class="form-control" type="date" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update Tournament
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Tournaments
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Tournament Edit page loaded');
+        });
+    </script>
+}

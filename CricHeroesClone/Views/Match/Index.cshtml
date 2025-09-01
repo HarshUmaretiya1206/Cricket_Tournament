@@ -1,38 +1,152 @@
 ﻿@model IEnumerable<CricHeroesClone.Models.Match>
-
 @{
     ViewData["Title"] = "Matches";
+    Layout = "_Layout";
+    var userRole = Context.Session.GetString("UserRole");
+    var isAdmin = userRole == "Admin";
+    var isScorer = userRole == "Scorer";
 }
 
-<h2>Matches</h2>
-<a asp-action="Create" class="btn btn-primary mb-3">+ Add Match</a>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-gamepad text-success"></i> Matches
+            </h1>
+        </div>
+    </div>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Tournament</th>
-            <th>Team A</th>
-            <th>Team B</th>
-            <th>Date</th>
-            <th>Venue</th>
-            <th>Result</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model)
-        {
-            <tr>
-                <td>@m.TournamentName</td>
-                <td>@m.TeamAName</td>
-                <td>@m.TeamBName</td>
-                <td>@m.MatchDate?.ToShortDateString()</td>
-                <td>@m.Venue</td>
-                <td>@m.Result</td>
-                <td>
-                    <a asp-action="Delete" asp-route-id="@m.Id" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Match Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Matches</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-gamepad fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matches Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-list"></i> All Matches
+                    </h6>
+                    @if (isAdmin)
+                    {
+                        <a href="@Url.Action("Create", "Match")" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus"></i> Add New Match
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead class="table-success">
+                                    <tr>
+                                        <th><i class="fas fa-trophy"></i> Tournament</th>
+                                        <th><i class="fas fa-users"></i> Teams</th>
+                                        <th><i class="fas fa-calendar"></i> Date</th>
+                                        <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+                                        <th><i class="fas fa-info-circle"></i> Status</th>
+                                        <th><i class="fas fa-cogs"></i> Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var match in Model)
+                                    {
+                                        <tr>
+                                            <td><strong>@match.TournamentName</strong></td>
+                                            <td>
+                                                <span class="badge badge-primary">@match.TeamAName</span>
+                                                <span class="text-muted mx-2">vs</span>
+                                                <span class="badge badge-primary">@match.TeamBName</span>
+                                            </td>
+                                            <td>@(match.MatchDate?.ToString("MMM dd, yyyy") ?? "TBD")</td>
+                                            <td>@(match.Venue ?? "TBD")</td>
+                                            <td>
+                                                @{
+                                                    var statusClass = match.Status switch
+                                                    {
+                                                        "Live" => "badge-success",
+                                                        "Completed" => "badge-info",
+                                                        "Cancelled" => "badge-danger",
+                                                        _ => "badge-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @statusClass">@match.Status</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="@Url.Action("MatchDetails", "Viewer", new { matchId = match.Id })" 
+                                                       class="btn btn-info btn-sm">
+                                                        <i class="fas fa-eye"></i> View
+                                                    </a>
+                                                    @if (isScorer && match.Status == "Live")
+                                                    {
+                                                        <a href="@Url.Action("Live", "Score")" class="btn btn-success btn-sm">
+                                                            <i class="fas fa-calculator"></i> Score
+                                                        </a>
+                                                    }
+                                                    @if (isAdmin)
+                                                    {
+                                                        <a href="@Url.Action("Edit", "Match", new { id = match.Id })" class="btn btn-warning btn-sm">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        <form method="post" action="@Url.Action("Delete", "Match")" style="display: inline;" 
+                                                              onsubmit="return confirm('Are you sure you want to delete this match?')">
+                                                            <input type="hidden" name="id" value="@match.Id" />
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-gamepad fa-3x text-muted mb-3"></i>
+                            <h5>No Matches Available</h5>
+                            <p class="text-muted">There are currently no matches scheduled.</p>
+                            @if (isAdmin)
+                            {
+                                <a href="@Url.Action("Create", "Match")" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Schedule First Match
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Matches page loaded');
+        });
+    </script>
+}

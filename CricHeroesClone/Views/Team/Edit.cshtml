@@ -1,0 +1,75 @@
+@model CricHeroesClone.Models.Team
+@{
+    ViewData["Title"] = "Edit Team";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-edit text-warning"></i> Edit Team
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-flag"></i> Update Team Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group">
+                            <label asp-for="Name" class="form-label">
+                                <i class="fas fa-flag"></i> Team Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter team name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TournamentId" class="form-label">
+                                <i class="fas fa-trophy"></i> Tournament
+                            </label>
+                            <select asp-for="TournamentId" asp-items="ViewBag.Tournaments" class="form-select">
+                                <option value="">-- Select Tournament --</option>
+                            </select>
+                            <span asp-validation-for="TournamentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="CaptainId" class="form-label">
+                                <i class="fas fa-crown"></i> Captain (Optional)
+                            </label>
+                            <input asp-for="CaptainId" class="form-control" placeholder="Captain ID (optional)" />
+                            <span asp-validation-for="CaptainId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update Team
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Teams
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Team Edit page loaded');
+        });
+    </script>
+}

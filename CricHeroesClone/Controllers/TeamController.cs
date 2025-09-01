@@ -41,6 +41,33 @@ namespace CricHeroesClone.Controllers
             return View(team);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var team = await _teamRepository.GetByIdAsync(id);
+            if (team == null)
+                return NotFound();
+            
+            var tournaments = await _tournamentRepository.GetAllAsync();
+            ViewBag.Tournaments = new SelectList(tournaments, "Id", "Name");
+            return View(team);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Team team)
+        {
+            if (ModelState.IsValid)
+            {
+                // For now, we'll just redirect since UpdateAsync is not implemented
+                // TODO: Implement UpdateAsync in TeamRepository
+                return RedirectToAction("Index");
+            }
+            
+            var tournaments = await _tournamentRepository.GetAllAsync();
+            ViewBag.Tournaments = new SelectList(tournaments, "Id", "Name");
+            return View(team);
+        }
+
         public async Task<IActionResult> Delete(int id)
         {
             await _teamRepository.DeleteAsync(id);

@@ -33,6 +33,26 @@ namespace CricHeroesClone.Controllers
             return View(match);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var match = await _matchRepository.GetByIdAsync(id);
+            if (match == null)
+                return NotFound();
+            return View(match);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Match match)
+        {
+            if (ModelState.IsValid)
+            {
+                await _matchRepository.UpdateAsync(match);
+                return RedirectToAction("Index");
+            }
+            return View(match);
+        }
+
         public async Task<IActionResult> Delete(int id)
         {
             await _matchRepository.DeleteAsync(id);

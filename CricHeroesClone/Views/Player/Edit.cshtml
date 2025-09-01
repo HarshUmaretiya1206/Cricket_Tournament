@@ -1,0 +1,106 @@
+@model CricHeroesClone.Models.Player
+@{
+    ViewData["Title"] = "Edit Player";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">
+                <i class="fas fa-edit text-warning"></i> Edit Player
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-warning">
+                        <i class="fas fa-user"></i> Update Player Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="form-group">
+                            <label asp-for="Name" class="form-label">
+                                <i class="fas fa-user"></i> Player Name
+                            </label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter player name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Role" class="form-label">
+                                <i class="fas fa-star"></i> Role
+                            </label>
+                            <select asp-for="Role" class="form-select">
+                                <option value="">-- Select Role --</option>
+                                <option value="Batsman">Batsman</option>
+                                <option value="Bowler">Bowler</option>
+                                <option value="All-rounder">All-rounder</option>
+                                <option value="Wicket-keeper">Wicket-keeper</option>
+                            </select>
+                            <span asp-validation-for="Role" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="TeamId" class="form-label">
+                                <i class="fas fa-flag"></i> Team
+                            </label>
+                            <select asp-for="TeamId" asp-items="ViewBag.Teams" class="form-select">
+                                <option value="">-- Select Team --</option>
+                            </select>
+                            <span asp-validation-for="TeamId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="BattingStyle" class="form-label">
+                                <i class="fas fa-bat"></i> Batting Style
+                            </label>
+                            <select asp-for="BattingStyle" class="form-select">
+                                <option value="">-- Select Batting Style --</option>
+                                <option value="Right-handed">Right-handed</option>
+                                <option value="Left-handed">Left-handed</option>
+                            </select>
+                            <span asp-validation-for="BattingStyle" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="BowlingStyle" class="form-label">
+                                <i class="fas fa-bowling-ball"></i> Bowling Style
+                            </label>
+                            <select asp-for="BowlingStyle" class="form-select">
+                                <option value="">-- Select Bowling Style --</option>
+                                <option value="Fast">Fast</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Spin">Spin</option>
+                            </select>
+                            <span asp-validation-for="BowlingStyle" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update Player
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Players
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Player Edit page loaded');
+        });
+    </script>
+}
