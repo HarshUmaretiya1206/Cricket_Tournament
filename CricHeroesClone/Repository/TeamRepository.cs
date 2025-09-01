@@ -28,7 +28,10 @@ namespace CricHeroesClone.Repository
                 {
                     Id = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    TournamentName = reader.GetString(2)
+                    TournamentName = reader.GetString(2),
+                    CaptainId = reader.IsDBNull(3) ? (int?)null : reader.GetInt32(3),
+                    TeamName = reader.GetString(1), // Use Name as TeamName
+                    CaptainName = reader.IsDBNull(4) ? "No Captain" : reader.GetString(4)
                 });
             }
             return list;
@@ -100,6 +103,16 @@ namespace CricHeroesClone.Repository
                 };
             }
             return null;
+        }
+
+        public async Task UpdateCaptainAsync(int teamId, int? captainId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("UPDATE Teams SET CaptainId = @CaptainId WHERE Id = @Id", con);
+            cmd.Parameters.AddWithValue("@CaptainId", captainId ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("@Id", teamId);
+            await con.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

@@ -31,8 +31,8 @@ namespace CricHeroesClone.Repository
                 {
                     Id = reader.GetInt32(0),
                     TournamentName = reader.GetString(1),
-                    TeamA = reader.GetString(2),
-                    TeamB = reader.GetString(3),
+                    TeamAName = reader.GetString(2),
+                    TeamBName = reader.GetString(3),
                     MatchDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
                     Venue = reader.IsDBNull(5) ? "" : reader.GetString(5),
                     Result = reader.IsDBNull(6) ? "" : reader.GetString(6)
@@ -58,8 +58,8 @@ namespace CricHeroesClone.Repository
                     {
                         Id = reader.GetInt32(0),
                         TournamentName = reader.GetString(1),
-                        TeamA = reader.GetString(2),
-                        TeamB = reader.GetString(3),
+                        TeamAName = reader.GetString(2),
+                        TeamBName = reader.GetString(3),
                         MatchDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
                         Venue = reader.IsDBNull(5) ? "" : reader.GetString(5),
                         Result = reader.IsDBNull(6) ? "" : reader.GetString(6)
@@ -164,20 +164,22 @@ namespace CricHeroesClone.Repository
         {
             var list = new List<Match>();
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE Status = 'Live'", con);
+            using var cmd = new SqlCommand("spGetLiveMatches", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 list.Add(new Match
                 {
-                    Id = reader.GetInt32("Id"),
-                    TournamentName = reader.GetString("TournamentName"),
-                    TeamA = reader.GetString("TeamA"),
-                    TeamB = reader.GetString("TeamB"),
-                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
-                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
-                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                    Id = reader.GetInt32(0),
+                    TournamentName = reader.GetString(1),
+                    TeamAName = reader.GetString(2),
+                    TeamBName = reader.GetString(3),
+                    MatchDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                    Venue = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                    Result = reader.IsDBNull(6) ? "" : reader.GetString(6)
                 });
             }
             return list;
@@ -187,20 +189,22 @@ namespace CricHeroesClone.Repository
         {
             var list = new List<Match>();
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE MatchDate > GETDATE() ORDER BY MatchDate", con);
+            using var cmd = new SqlCommand("spGetUpcomingMatches", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 list.Add(new Match
                 {
-                    Id = reader.GetInt32("Id"),
-                    TournamentName = reader.GetString("TournamentName"),
-                    TeamA = reader.GetString("TeamA"),
-                    TeamB = reader.GetString("TeamB"),
-                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
-                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
-                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                    Id = reader.GetInt32(0),
+                    TournamentName = reader.GetString(1),
+                    TeamAName = reader.GetString(2),
+                    TeamBName = reader.GetString(3),
+                    MatchDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                    Venue = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                    Result = reader.IsDBNull(6) ? "" : reader.GetString(6)
                 });
             }
             return list;
@@ -210,21 +214,23 @@ namespace CricHeroesClone.Repository
         {
             var list = new List<Match>();
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE (TeamAId = @TeamId OR TeamBId = @TeamId) AND MatchDate > GETDATE() ORDER BY MatchDate", con);
+            using var cmd = new SqlCommand("spGetUpcomingMatchesByTeam", con);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@TeamId", teamId);
+            
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 list.Add(new Match
                 {
-                    Id = reader.GetInt32("Id"),
-                    TournamentName = reader.GetString("TournamentName"),
-                    TeamA = reader.GetString("TeamA"),
-                    TeamB = reader.GetString("TeamB"),
-                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
-                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
-                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                    Id = reader.GetInt32(0),
+                    TournamentName = reader.GetString(1),
+                    TeamAName = reader.GetString(2),
+                    TeamBName = reader.GetString(3),
+                    MatchDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                    Venue = reader.IsDBNull(5) ? "" : reader.GetString(5),
+                    Result = reader.IsDBNull(6) ? "" : reader.GetString(6)
                 });
             }
             return list;

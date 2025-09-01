@@ -1,20 +1,98 @@
 ﻿@model IEnumerable<CricHeroesClone.Models.Match>
 
-<h2>Scorer Dashboard</h2>
-<table class="table">
-    <thead>
-        <tr><th>Match</th><th>Date</th><th></th></tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model)
-        {
-            <tr>
-                <td>@m.TeamAName vs @m.TeamBName</td>
-                <td>@m.MatchDate</td>
-                <td>
-                    <a class="btn btn-sm btn-primary" asp-action="Score" asp-route-matchId="@m.Id">Score</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@{
+    ViewData["Title"] = "Live Scoring";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Live Scoring Dashboard</h1>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Available Matches for Scoring</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Match</th>
+                                        <th>Tournament</th>
+                                        <th>Date</th>
+                                        <th>Venue</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var match in Model)
+                                    {
+                                        <tr>
+                                            <td><strong>@match.TeamAName vs @match.TeamBName</strong></td>
+                                            <td>@match.TournamentName</td>
+                                            <td>@(match.MatchDate?.ToString("MMM dd, yyyy HH:mm") ?? "TBD")</td>
+                                            <td>@(match.Venue ?? "TBD")</td>
+                                            <td>
+                                                <span class="badge badge-@(match.Status == "Live" ? "success" : "secondary")">
+                                                    @match.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (match.Status == "Live")
+                                                {
+                                                    <span class="text-success">
+                                                        <i class="fas fa-play-circle"></i> Live Match
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-clock"></i> Scheduled
+                                                    </span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-body text-center">
+                        <i class="fas fa-info-circle fa-3x text-info mb-3"></i>
+                        <h5>No Matches Available</h5>
+                        <p class="text-muted">There are currently no matches available for scoring.</p>
+                        <a href="@Url.Action("Index", "Match")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create New Match
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Live Scoring Dashboard loaded');
+        });
+    </script>
+}

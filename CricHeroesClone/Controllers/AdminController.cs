@@ -62,6 +62,9 @@ namespace CricHeroesClone.Controllers
             if (role != "Admin") return Forbid();
             
             var teams = await _teamRepo.GetAllAsync();
+            var availableCaptains = await _userRepo.GetAllAsync();
+            
+            ViewBag.AvailableCaptains = availableCaptains;
             return View(teams);
         }
 
@@ -100,6 +103,17 @@ namespace CricHeroesClone.Controllers
             
             await _userRepo.DeleteAsync(userId);
             return RedirectToAction("UserManagement");
+        }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> AssignCaptain(int teamId, int captainId)
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Admin") return Forbid();
+            
+            await _teamRepo.UpdateCaptainAsync(teamId, captainId);
+            return RedirectToAction("TeamManagement");
         }
     }
 }

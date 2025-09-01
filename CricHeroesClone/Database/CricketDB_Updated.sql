@@ -99,30 +99,12 @@ CREATE TABLE Scores (
 GO
 
 -- ========================================
--- Insert Sample Data
+-- Insert Essential Data Only
 -- ========================================
 
 -- Insert default admin user
 INSERT INTO Users (UserName, Email, PasswordHash, Role) 
 VALUES ('admin', 'admin@cricheroes.com', 'admin123', 'Admin');
-GO
-
--- Insert sample tournament
-INSERT INTO Tournaments (Name, StartDate, EndDate) 
-VALUES ('Premier League 2024', '2024-01-01', '2024-12-31');
-GO
-
--- Insert sample teams
-INSERT INTO Teams (Name, TournamentId) 
-VALUES ('Mumbai Indians', 1), ('Chennai Super Kings', 1);
-GO
-
--- Insert sample players
-INSERT INTO Players (Name, Role, TeamId, BattingStyle, BowlingStyle) 
-VALUES 
-('Virat Kohli', 'Batsman', 1, 'Right-handed', NULL),
-('MS Dhoni', 'Wicket-keeper', 2, 'Right-handed', NULL),
-('Jasprit Bumrah', 'Bowler', 1, 'Right-handed', 'Fast');
 GO
 
 -- ========================================
@@ -214,7 +196,7 @@ CREATE OR ALTER PROCEDURE spGetTeams
 AS
 BEGIN
     SELECT t.Id, t.Name, tr.Name AS TournamentName, 
-           t.CaptainId, u.UserName AS CaptainName
+           t.CaptainId, ISNULL(u.UserName, 'No Captain') AS CaptainName
     FROM Teams t
     JOIN Tournaments tr ON t.TournamentId = tr.Id
     LEFT JOIN Users u ON t.CaptainId = u.Id;
@@ -279,7 +261,7 @@ CREATE OR ALTER PROCEDURE spGetMatches
 AS
 BEGIN
     SELECT m.Id, tr.Name AS TournamentName,
-           ta.Name AS TeamA, tb.Name AS TeamB,
+           ta.Name AS TeamAName, tb.Name AS TeamBName,
            m.MatchDate, m.Venue, m.Status, m.Result
     FROM Matches m
     JOIN Tournaments tr ON m.TournamentId = tr.Id
@@ -326,43 +308,73 @@ END
 GO
 
 -- ========================================
--- Additional Views for Dashboard Data
+-- Additional Stored Procedures for Enhanced Functionality
 -- ========================================
 
--- View for team players with team info
-CREATE VIEW vw_TeamPlayers AS
-SELECT 
-    p.Id,
-    p.Name AS PlayerName,
-    p.Role,
-    p.BattingStyle,
-    p.BowlingStyle,
-    p.TeamId,
-    t.Name AS TeamName
-FROM Players p
-JOIN Teams t ON p.TeamId = t.Id;
+-- Get live matches
+CREATE OR ALTER PROCEDURE spGetLiveMatches
+AS
+BEGIN
+    SELECT m.Id, tr.Name AS TournamentName,
+           ta.Name AS TeamAName, tb.Name AS TeamBName,
+           m.MatchDate, m.Venue, m.Status, m.Result
+    FROM Matches m
+    JOIN Tournaments tr ON m.TournamentId = tr.Id
+    JOIN Teams ta ON m.TeamAId = ta.Id
+    JOIN Teams tb ON m.TeamBId = tb.Id
+    WHERE m.Status = 'Live';
+END
 GO
 
--- View for match details with team names
-CREATE VIEW vw_MatchDetails AS
-SELECT 
-    m.Id,
-    m.TournamentId,
-    tr.Name AS TournamentName,
-    m.TeamAId,
-    ta.Name AS TeamA,
-    m.TeamBId,
-    tb.Name AS TeamB,
-    m.MatchDate,
-    m.Venue,
-    m.Status,
-    m.Result
-FROM Matches m
-JOIN Tournaments tr ON m.TournamentId = tr.Id
-JOIN Teams ta ON m.TeamAId = ta.Id
-JOIN Teams tb ON m.TeamBId = tb.Id;
+-- Get upcoming matches
+CREATE OR ALTER PROCEDURE spGetUpcomingMatches
+AS
+BEGIN
+    SELECT m.Id, tr.Name AS TournamentName,
+           ta.Name AS TeamAName, tb.Name AS TeamBName,
+           m.MatchDate, m.Venue, m.Status, m.Result
+    FROM Matches m
+    JOIN Tournaments tr ON m.TournamentId = tr.Id
+    JOIN Teams ta ON m.TeamAId = ta.Id
+    JOIN Teams tb ON m.TeamBId = tb.Id
+    WHERE m.Status = 'Scheduled' AND m.MatchDate > GETDATE()
+    ORDER BY m.MatchDate;
+END
 GO
 
-PRINT 'Database CricketDB created successfully with role-based functionality!';
+-- Get upcoming matches by team
+CREATE OR ALTER PROCEDURE spGetUpcomingMatchesByTeam
+    @TeamId INT
+AS
+BEGIN
+    SELECT m.Id, tr.Name AS TournamentName,
+           ta.Name AS TeamAName, tb.Name AS TeamBName,
+           m.MatchDate, m.Venue, m.Status, m.Result
+    FROM Matches m
+    JOIN Tournaments tr ON m.TournamentId = tr.Id
+    JOIN Teams ta ON m.TeamAId = ta.Id
+    JOIN Teams tb ON m.TeamBId = tb.Id
+    WHERE (m.TeamAId = @TeamId OR m.TeamBId = @TeamId) 
+          AND m.Status = 'Scheduled' 
+          AND m.MatchDate > GETDATE()
+    ORDER BY m.MatchDate;
+END
+GO
+
+-- Get total counts for dashboard
+CREATE OR ALTER PROCEDURE spGetDashboardCounts
+AS
+BEGIN
+    SELECT 
+        (SELECT COUNT(*) FROM Users) AS TotalUsers,
+        (SELECT COUNT(*) FROM Teams) AS TotalTeams,
+        (SELECT COUNT(*) FROM Players) AS TotalPlayers,
+        (SELECT COUNT(*) FROM Matches) AS TotalMatches,
+        (SELECT COUNT(*) FROM Tournaments) AS TotalTournaments;
+END
+GO
+
+PRINT 'Database CricketDB created successfully with clean structure!';
 PRINT 'Default admin user: admin/admin123';
+PRINT 'No dummy data - add your own teams, players, and matches as needed.';
 GO

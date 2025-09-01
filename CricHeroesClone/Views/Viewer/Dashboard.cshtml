@@ -1,6 +1,11 @@
 @{
     ViewData["Title"] = "Viewer Dashboard";
     Layout = "_Layout";
+    
+    // Cast ViewBag properties to proper types to avoid RuntimeBinderException
+    var liveMatches = ViewBag.LiveMatches as IEnumerable<dynamic> ?? new List<dynamic>();
+    var upcomingMatches = ViewBag.UpcomingMatches as IEnumerable<dynamic> ?? new List<dynamic>();
+    var teams = ViewBag.Teams as IEnumerable<dynamic> ?? new List<dynamic>();
 }
 
 <div class="container-fluid">
@@ -25,7 +30,7 @@
     </div>
 
     <!-- Live Matches -->
-    @if (ViewBag.LiveMatches != null && ViewBag.LiveMatches.Count > 0)
+    @if (liveMatches.Any())
     {
         <div class="row">
             <div class="col-12">
@@ -35,7 +40,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            @foreach (var match in ViewBag.LiveMatches)
+                            @foreach (var match in liveMatches)
                             {
                                 <div class="col-md-6 mb-3">
                                     <div class="card border-success">
@@ -58,7 +63,7 @@
     }
 
     <!-- Upcoming Matches -->
-    @if (ViewBag.UpcomingMatches != null && ViewBag.UpcomingMatches.Count > 0)
+    @if (upcomingMatches.Any())
     {
         <div class="row">
             <div class="col-12">
@@ -78,7 +83,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var match in ViewBag.UpcomingMatches.Take(5))
+                                    @foreach (var match in upcomingMatches.Take(5))
                                     {
                                         <tr>
                                             <td>@match.TeamAName vs @match.TeamBName</td>
@@ -135,7 +140,7 @@
     </div>
 
     <!-- Teams Overview -->
-    @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
+    @if (teams.Any())
     {
         <div class="row">
             <div class="col-12">
@@ -145,7 +150,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            @foreach (var team in ViewBag.Teams.Take(6))
+                            @foreach (var team in teams.Take(6))
                             {
                                 <div class="col-md-4 mb-3">
                                     <div class="card">

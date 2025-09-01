@@ -10,5 +10,6 @@ namespace CricHeroesClone.Repository
         Task<int> GetTotalTeamsAsync();
         Task<Team?> GetTeamByCaptainAsync(int captainId);
         Task<Team?> GetByIdAsync(int teamId);
+        Task UpdateCaptainAsync(int teamId, int? captainId);
     }
 }

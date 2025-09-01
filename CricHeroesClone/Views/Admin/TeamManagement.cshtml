@@ -2,6 +2,9 @@
 @{
     ViewData["Title"] = "Team Management";
     Layout = "_Layout";
+    
+    // Get users who can be captains (Viewers or Captains)
+    var availableCaptains = ViewBag.AvailableCaptains as IEnumerable<dynamic> ?? new List<dynamic>();
 }
 
 <div class="container-fluid">
@@ -69,6 +72,25 @@
                                             {
                                                 <span class="text-muted">No Captain</span>
                                             }
+                                            
+                                            <!-- Captain Assignment Dropdown -->
+                                            <div class="mt-2">
+                                                <form method="post" action="@Url.Action("AssignCaptain", "Admin")" style="display: inline;">
+                                                    <input type="hidden" name="teamId" value="@team.Id" />
+                                                    <select name="captainId" class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                                                        <option value="">-- Select Captain --</option>
+                                                        @foreach (var user in availableCaptains)
+                                                        {
+                                                            <option value="@user.Id" selected="@(team.CaptainId == user.Id)">
+                                                                @user.Username (@user.Role)
+                                                            </option>
+                                                        }
+                                                    </select>
+                                                    <button type="submit" class="btn btn-success btn-sm ml-1">
+                                                        <i class="fas fa-save"></i> Assign
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
