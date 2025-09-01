@@ -60,8 +60,6 @@
                                         <th><i class="fas fa-user"></i> Player Name</th>
                                         <th><i class="fas fa-star"></i> Role</th>
                                         <th><i class="fas fa-flag"></i> Team</th>
-                                        <th><i class="fas fa-bat"></i> Batting Style</th>
-                                        <th><i class="fas fa-bowling-ball"></i> Bowling Style</th>
                                         <th><i class="fas fa-cogs"></i> Actions</th>
                                     </tr>
                                 </thead>
@@ -87,27 +85,8 @@
                                             </td>
                                             <td>
                                                 <span class="badge badge-secondary">@player.TeamName</span>
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(player.BattingStyle))
-                                                {
-                                                    <span class="text-muted">@player.BattingStyle</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (!string.IsNullOrEmpty(player.BowlingStyle))
-                                                {
-                                                    <span class="text-muted">@player.BowlingStyle</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">-</span>
-                                                }
-                                            </td>
+                                            
+                                           
                                             <td>
                                                 <div class="btn-group" role="group">
                                                     @if (isAdmin)
