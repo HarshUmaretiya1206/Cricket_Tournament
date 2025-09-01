@@ -13,7 +13,7 @@ namespace CricHeroesClone.Repository
         {
             using var con = _context.CreateConnection();
             await con.ExecuteAsync("spRegisterUser",
-                new { UserName = user.Username, Email = user.Email, PasswordHash = user.Password },
+                new { UserName = user.Username, Email = user.Email, PasswordHash = user.PasswordHash, Role = user.Role },
                 commandType: System.Data.CommandType.StoredProcedure);
         }
 
@@ -30,6 +30,33 @@ namespace CricHeroesClone.Repository
         {
             using var con = _context.CreateConnection();
             return await con.QueryAsync<User>("SELECT * FROM Users");
+        }
+
+        public async Task<int> GetTotalUsersAsync()
+        {
+            using var con = _context.CreateConnection();
+            return await con.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Users");
+        }
+
+        public async Task UpdateUserRoleAsync(int userId, string newRole)
+        {
+            using var con = _context.CreateConnection();
+            await con.ExecuteAsync("UPDATE Users SET Role = @Role WHERE Id = @Id",
+                new { Role = newRole, Id = userId });
+        }
+
+        public async Task DeleteAsync(int userId)
+        {
+            using var con = _context.CreateConnection();
+            await con.ExecuteAsync("DELETE FROM Users WHERE Id = @Id",
+                new { Id = userId });
+        }
+
+        public async Task<User?> GetByIdAsync(int userId)
+        {
+            using var con = _context.CreateConnection();
+            return await con.QueryFirstOrDefaultAsync<User>("SELECT * FROM Users WHERE Id = @Id",
+                new { Id = userId });
         }
     }
 }

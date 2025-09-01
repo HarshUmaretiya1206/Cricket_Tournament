@@ -1,4 +1,4 @@
-﻿using CricHeroesClone.Models; // Add this line
+﻿using CricHeroesClone.Models; 
 
 namespace CricHeroesClone.Repository
 {

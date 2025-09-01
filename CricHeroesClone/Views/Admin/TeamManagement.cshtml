@@ -1,0 +1,107 @@
+@model IEnumerable<CricHeroesClone.Models.Team>
+@{
+    ViewData["Title"] = "Team Management";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Team Management</h1>
+        </div>
+    </div>
+
+    <!-- Team Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Teams</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-flag fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teams Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">All Teams</h6>
+                    <a href="@Url.Action("Create", "Team")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add New Team
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Team Name</th>
+                                    <th>Tournament</th>
+                                    <th>Captain</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var team in Model)
+                                {
+                                    <tr>
+                                        <td>@team.Id</td>
+                                        <td>@team.TeamName</td>
+                                        <td>@team.TournamentName</td>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(team.CaptainName))
+                                            {
+                                                <span class="badge badge-info">@team.CaptainName</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No Captain</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="@Url.Action("Edit", "Team", new { id = team.Id })" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="@Url.Action("Index", "Player")" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-users"></i> Players
+                                                </a>
+                                                <form method="post" action="@Url.Action("Delete", "Team")" style="display: inline;" 
+                                                      onsubmit="return confirm('Are you sure you want to delete this team?')">
+                                                    <input type="hidden" name="id" value="@team.Id" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Team Management loaded');
+        });
+    </script>
+}

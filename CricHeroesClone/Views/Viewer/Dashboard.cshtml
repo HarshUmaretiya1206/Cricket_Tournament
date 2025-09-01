@@ -1,0 +1,175 @@
+@{
+    ViewData["Title"] = "Viewer Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Cricket Viewer Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Welcome to Cricket Heroes!</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">Stay updated with live matches, team standings, and tournament information.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Matches -->
+    @if (ViewBag.LiveMatches != null && ViewBag.LiveMatches.Count > 0)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-success">Live Matches</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var match in ViewBag.LiveMatches)
+                            {
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body">
+                                            <h6 class="card-title">@match.TeamAName vs @match.TeamBName</h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">@match.MatchDate.ToString("MMM dd, yyyy")</small>
+                                            </p>
+                                            <a href="@Url.Action("MatchDetails", "Viewer", new { matchId = match.Id })" 
+                                               class="btn btn-success btn-sm">Watch Live</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Upcoming Matches -->
+    @if (ViewBag.UpcomingMatches != null && ViewBag.UpcomingMatches.Count > 0)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Upcoming Matches</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Teams</th>
+                                        <th>Date</th>
+                                        <th>Tournament</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var match in ViewBag.UpcomingMatches.Take(5))
+                                    {
+                                        <tr>
+                                            <td>@match.TeamAName vs @match.TeamBName</td>
+                                            <td>@match.MatchDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@(match.TournamentName ?? "Friendly")</td>
+                                            <td>
+                                                <a href="@Url.Action("MatchDetails", "Viewer", new { matchId = match.Id })" 
+                                                   class="btn btn-info btn-sm">View Details</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Navigation -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Navigation</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("LiveMatches", "Viewer")" class="btn btn-success btn-block">
+                                <i class="fas fa-play-circle"></i> Live Matches
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("TeamStandings", "Viewer")" class="btn btn-primary btn-block">
+                                <i class="fas fa-trophy"></i> Team Standings
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("Index", "Tournament")" class="btn btn-info btn-block">
+                                <i class="fas fa-medal"></i> Tournaments
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("Index", "Team")" class="btn btn-warning btn-block">
+                                <i class="fas fa-flag"></i> All Teams
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teams Overview -->
+    @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Teams</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @foreach (var team in ViewBag.Teams.Take(6))
+                            {
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">@team.TeamName</h6>
+                                            <p class="card-text">
+                                                <small class="text-muted">Captain: @team.CaptainName</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Viewer Dashboard loaded');
+        });
+    </script>
+}

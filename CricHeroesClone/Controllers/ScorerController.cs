@@ -1,79 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CricHeroesClone.Models;
+using Microsoft.AspNetCore.Mvc;
 using CricHeroesClone.Repository;
+using CricHeroesClone.Models;
 
 namespace CricHeroesClone.Controllers
 {
-    public class ScoreController : Controller
+    public class ScorerController : Controller
     {
-        private readonly IScoreRepository _scoreRepo;
         private readonly IMatchRepository _matchRepo;
+        private readonly IScoreRepository _scoreRepo;
+        private readonly ITeamRepository _teamRepo;
 
-        public ScoreController(IScoreRepository scoreRepo, IMatchRepository matchRepo)
+        public ScorerController(IMatchRepository matchRepo, IScoreRepository scoreRepo, ITeamRepository teamRepo)
         {
-            _scoreRepo = scoreRepo;
             _matchRepo = matchRepo;
+            _scoreRepo = scoreRepo;
+            _teamRepo = teamRepo;
         }
 
-        // Live score page with match selection
-        public async Task<IActionResult> Live()
+        public IActionResult Dashboard()
         {
-            var matches = await _matchRepo.GetAllAsync();
-            return View(matches); // Pass matches to view
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Scorer") return Forbid();
+            
+            var userId = HttpContext.Session.GetInt32("UserID");
+            ViewBag.UserId = userId;
+            return View();
         }
 
-        // Show Score page for a specific match
-        public async Task<IActionResult> Score(int matchId)
+        public async Task<IActionResult> LiveMatches()
         {
-            if (matchId <= 0)
-                return BadRequest("Invalid matchId.");
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Scorer") return Forbid();
+
+            var matches = await _matchRepo.GetLiveMatchesAsync();
+            return View(matches);
+        }
+
+        public async Task<IActionResult> ScoreMatch(int matchId)
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            if (role != "Scorer") return Forbid();
 
             var match = await _matchRepo.GetByIdAsync(matchId);
-            if (match == null)
-                return NotFound("Match not found.");
+            if (match == null) return NotFound();
 
-            ViewBag.MatchId = matchId;
-            return View(); // Views/Score/Score.cshtml
-        }
-
-        // Get scores JSON for selected match
-        [HttpGet]
-        public async Task<IActionResult> GetScores(int matchId)
-        {
-            if (matchId <= 0) return BadRequest("Invalid matchId.");
-            var scores = await _scoreRepo.GetScoresByMatchAsync(matchId);
-            return Json(scores);
-        }
-
-        // Update score endpoint (used by form/ajax)
-        [HttpPost]
-        public async Task<IActionResult> UpdateScore([FromBody] Score score)
-        {
-            if (score.MatchId <= 0 || score.TeamId <= 0)
-                return BadRequest("Invalid MatchId or TeamId.");
-
-            await _scoreRepo.UpdateScoreAsync(score);
-            return Ok();
-        }
-
-        // Handle RecordBall form submission
-        [HttpPost]
-        public async Task<IActionResult> RecordBall(int matchId, int batsmanId, int bowlerId, int runs, bool isWicket)
-        {
-            // Map to Score object (basic example)
-            var score = new Score
-            {
-                MatchId = matchId,
-                TeamId = 1, // you can adjust this to actual teamId logic
-                Runs = runs,
-                Wickets = isWicket ? 1 : 0,
-                Overs = 0 // overs tracking logic needed
-            };
-
-            await _scoreRepo.UpdateScoreAsync(score);
-
-            TempData["Message"] = "Ball recorded successfully!";
-            return RedirectToAction("Score", new { matchId });
+            ViewBag.Match = match;
+            return View();
         }
     }
 }

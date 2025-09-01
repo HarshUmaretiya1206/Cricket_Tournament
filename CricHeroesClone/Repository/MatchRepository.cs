@@ -152,6 +152,83 @@ namespace CricHeroesClone.Repository
             };
         }
 
+        public async Task<int> GetTotalMatchesAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT COUNT(*) FROM Matches", con);
+            await con.OpenAsync();
+            return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+
+        public async Task<IEnumerable<Match>> GetLiveMatchesAsync()
+        {
+            var list = new List<Match>();
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE Status = 'Live'", con);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                list.Add(new Match
+                {
+                    Id = reader.GetInt32("Id"),
+                    TournamentName = reader.GetString("TournamentName"),
+                    TeamA = reader.GetString("TeamA"),
+                    TeamB = reader.GetString("TeamB"),
+                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
+                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
+                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                });
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<Match>> GetUpcomingMatchesAsync()
+        {
+            var list = new List<Match>();
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE MatchDate > GETDATE() ORDER BY MatchDate", con);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                list.Add(new Match
+                {
+                    Id = reader.GetInt32("Id"),
+                    TournamentName = reader.GetString("TournamentName"),
+                    TeamA = reader.GetString("TeamA"),
+                    TeamB = reader.GetString("TeamB"),
+                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
+                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
+                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                });
+            }
+            return list;
+        }
+
+        public async Task<IEnumerable<Match>> GetUpcomingMatchesByTeamAsync(int teamId)
+        {
+            var list = new List<Match>();
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Matches WHERE (TeamAId = @TeamId OR TeamBId = @TeamId) AND MatchDate > GETDATE() ORDER BY MatchDate", con);
+            cmd.Parameters.AddWithValue("@TeamId", teamId);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                list.Add(new Match
+                {
+                    Id = reader.GetInt32("Id"),
+                    TournamentName = reader.GetString("TournamentName"),
+                    TeamA = reader.GetString("TeamA"),
+                    TeamB = reader.GetString("TeamB"),
+                    MatchDate = reader.IsDBNull("MatchDate") ? null : reader.GetDateTime("MatchDate"),
+                    Venue = reader.IsDBNull("Venue") ? "" : reader.GetString("Venue"),
+                    Result = reader.IsDBNull("Result") ? "" : reader.GetString("Result")
+                });
+            }
+            return list;
+        }
     }
 }
 

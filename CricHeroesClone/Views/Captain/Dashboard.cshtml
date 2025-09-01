@@ -1,0 +1,139 @@
+@{
+    ViewData["Title"] = "Captain Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Captain Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Team Information -->
+    @if (ViewBag.Team != null)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Team Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>@ViewBag.Team.TeamName</h5>
+                                <p class="text-muted">Captain: @ViewBag.Team.CaptainName</p>
+                                <p class="text-muted">Total Players: @(ViewBag.Players?.Count ?? 0)</p>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <span class="badge badge-success badge-pill">Active Team</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("TeamPlayers", "Captain")" class="btn btn-primary btn-block">
+                                <i class="fas fa-users"></i> Manage Team Players
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("UpcomingMatches", "Captain")" class="btn btn-success btn-block">
+                                <i class="fas fa-calendar"></i> Upcoming Matches
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("Index", "Player")" class="btn btn-info btn-block">
+                                <i class="fas fa-user-plus"></i> Add Players
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="@Url.Action("Index", "Team")" class="btn btn-warning btn-block">
+                                <i class="fas fa-edit"></i> Edit Team
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Players Overview -->
+    @if (ViewBag.Players != null && ViewBag.Players.Count > 0)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Team Players</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Player Name</th>
+                                        <th>Role</th>
+                                        <th>Batting Style</th>
+                                        <th>Bowling Style</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var player in ViewBag.Players)
+                                    {
+                                        <tr>
+                                            <td>@player.PlayerName</td>
+                                            <td>@player.Role</td>
+                                            <td>@player.BattingStyle</td>
+                                            <td>@player.BowlingStyle</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Captain Guidelines -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Captain Responsibilities</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Manage team composition and player selection</li>
+                        <li><i class="fas fa-check text-success"></i> Plan match strategies and tactics</li>
+                        <li><i class="fas fa-check text-success"></i> Coordinate with tournament organizers</li>
+                        <li><i class="fas fa-check text-success"></i> Ensure team discipline and fair play</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Captain Dashboard loaded');
+        });
+    </script>
+}

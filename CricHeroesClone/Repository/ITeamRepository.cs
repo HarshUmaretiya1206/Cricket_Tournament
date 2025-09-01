@@ -7,5 +7,8 @@ namespace CricHeroesClone.Repository
         Task<IEnumerable<Team>> GetAllAsync();
         Task AddAsync(Team team);
         Task DeleteAsync(int teamId);
+        Task<int> GetTotalTeamsAsync();
+        Task<Team?> GetTeamByCaptainAsync(int captainId);
+        Task<Team?> GetByIdAsync(int teamId);
     }
 }

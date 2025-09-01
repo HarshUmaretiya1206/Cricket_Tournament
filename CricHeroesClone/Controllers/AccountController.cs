@@ -24,13 +24,15 @@ namespace CricHeroesClone.Controllers
 
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("UserRole", user.Role);
-            HttpContext.Session.SetInt32("UserID", user.UserID);
+            HttpContext.Session.SetInt32("UserID", user.Id);
 
             // redirect based on role
             return user.Role switch
             {
                 "Admin" => RedirectToAction("Dashboard", "Admin"),
                 "Scorer" => RedirectToAction("Dashboard", "Scorer"),
+                "Captain" => RedirectToAction("Dashboard", "Captain"),
+                "Viewer" => RedirectToAction("Dashboard", "Viewer"),
                 _ => RedirectToAction("Index", "Home")
             };
         }
@@ -40,6 +42,12 @@ namespace CricHeroesClone.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User model)
         {
+            // Set default role to Viewer for new registrations
+            if (string.IsNullOrEmpty(model.Role))
+            {
+                model.Role = "Viewer";
+            }
+            
             await _userRepo.RegisterAsync(model);
             return RedirectToAction("Login");
         }

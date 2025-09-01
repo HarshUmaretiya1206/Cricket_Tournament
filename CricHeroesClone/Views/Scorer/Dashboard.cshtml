@@ -1,16 +1,98 @@
-﻿@model IEnumerable<CricHeroesClone.Models.Match>
-<h2>Scorer Dashboard</h2>
-<table class="table">
-    <thead><tr><th>Match</th><th>Date</th><th></th></tr></thead>
-    <tbody>
-        @foreach (var m in Model)
-        {
-            <tr>
-                <td>@m.TeamAName vs @m.TeamBName</td>
-                <td>@m.MatchDate</td>
-                <td><a class="btn btn-sm btn-primary" asp-action="Score" asp-route-matchId="@m.Id">Score</a></td>
-            </tr>
-        }
-    </tbody>
-</table>
+﻿@{
+    ViewData["Title"] = "Scorer Dashboard";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Scorer Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Welcome, Scorer!</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">You are logged in as a Scorer. Use this dashboard to manage live matches and update scores.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="@Url.Action("LiveMatches", "Scorer")" class="btn btn-success btn-block btn-lg">
+                                <i class="fas fa-play-circle"></i> View Live Matches
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="@Url.Action("Index", "Score")" class="btn btn-primary btn-block btn-lg">
+                                <i class="fas fa-calculator"></i> Manage Scores
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="@Url.Action("Index", "Match")" class="btn btn-info btn-block btn-lg">
+                                <i class="fas fa-list"></i> All Matches
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Scoring Activity</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">No recent scoring activity to display.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Scoring Guidelines</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success"></i> Update scores in real-time during matches</li>
+                        <li><i class="fas fa-check text-success"></i> Record wickets, runs, and extras accurately</li>
+                        <li><i class="fas fa-check text-success"></i> Maintain match statistics and player performance</li>
+                        <li><i class="fas fa-check text-success"></i> Ensure fair play and rule compliance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Scorer Dashboard loaded');
+        });
+    </script>
+}
 

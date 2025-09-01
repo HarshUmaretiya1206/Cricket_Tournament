@@ -7,5 +7,9 @@ namespace CricHeroesClone.Repository
         Task RegisterAsync(User user);
         Task<User?> LoginAsync(string username, string password);
         Task<IEnumerable<User>> GetAllAsync();
+        Task<int> GetTotalUsersAsync();
+        Task UpdateUserRoleAsync(int userId, string newRole);
+        Task DeleteAsync(int userId);
+        Task<User?> GetByIdAsync(int userId);
     }
 }

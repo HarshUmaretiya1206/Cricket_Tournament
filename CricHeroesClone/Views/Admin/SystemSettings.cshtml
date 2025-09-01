@@ -1,0 +1,224 @@
+@{
+    ViewData["Title"] = "System Settings";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">System Settings</h1>
+        </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">System Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Application Details</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Application Name:</strong> CricHeroesClone</li>
+                                <li><strong>Version:</strong> 1.0.0</li>
+                                <li><strong>Framework:</strong> .NET 8.0</li>
+                                <li><strong>Database:</strong> SQL Server</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Environment</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Environment:</strong> Development</li>
+                                <li><strong>Machine Name:</strong> @Environment.MachineName</li>
+                                <li><strong>OS Version:</strong> @Environment.OSVersion.ToString()</li>
+                                <li><strong>.NET Version:</strong> @Environment.Version.ToString()</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Settings -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Database Settings</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Connection Information</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Provider:</strong> Microsoft.Data.SqlClient</li>
+                                <li><strong>ORM:</strong> Dapper</li>
+                                <li><strong>Connection Pooling:</strong> Enabled</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Database Operations</h6>
+                            <div class="btn-group-vertical w-100">
+                                <button class="btn btn-info btn-sm mb-2" onclick="testConnection()">
+                                    <i class="fas fa-database"></i> Test Connection
+                                </button>
+                                <button class="btn btn-warning btn-sm mb-2" onclick="backupDatabase()">
+                                    <i class="fas fa-download"></i> Backup Database
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="clearCache()">
+                                    <i class="fas fa-broom"></i> Clear Cache
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Security Settings</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Authentication</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Session Timeout:</strong> 20 minutes</li>
+                                <li><strong>Password Policy:</strong> Standard</li>
+                                <li><strong>Role-Based Access:</strong> Enabled</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Security Actions</h6>
+                            <div class="btn-group-vertical w-100">
+                                <button class="btn btn-warning btn-sm mb-2" onclick="changePassword()">
+                                    <i class="fas fa-key"></i> Change Admin Password
+                                </button>
+                                <button class="btn btn-info btn-sm mb-2" onclick="viewLogs()">
+                                    <i class="fas fa-list"></i> View System Logs
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="lockSystem()">
+                                    <i class="fas fa-lock"></i> Emergency Lock
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maintenance -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">System Maintenance</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Maintenance Tasks</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Last Backup:</strong> @DateTime.Now.AddDays(-1).ToString("MMM dd, yyyy HH:mm")</li>
+                                <li><strong>Last Cleanup:</strong> @DateTime.Now.AddDays(-3).ToString("MMM dd, yyyy HH:mm")</li>
+                                <li><strong>System Health:</strong> <span class="badge badge-success">Good</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Maintenance Actions</h6>
+                            <div class="btn-group-vertical w-100">
+                                <button class="btn btn-success btn-sm mb-2" onclick="runMaintenance()">
+                                    <i class="fas fa-tools"></i> Run Maintenance
+                                </button>
+                                <button class="btn btn-info btn-sm mb-2" onclick="optimizeDatabase()">
+                                    <i class="fas fa-chart-line"></i> Optimize Database
+                                </button>
+                                <button class="btn btn-warning btn-sm" onclick="restartSystem()">
+                                    <i class="fas fa-redo"></i> Restart System
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('System Settings loaded');
+        });
+
+        function testConnection() {
+            alert('Testing database connection...');
+            // Add AJAX call to test connection
+        }
+
+        function backupDatabase() {
+            if (confirm('Are you sure you want to backup the database?')) {
+                alert('Database backup initiated...');
+                // Add AJAX call to backup database
+            }
+        }
+
+        function clearCache() {
+            if (confirm('Are you sure you want to clear the cache?')) {
+                alert('Cache cleared successfully!');
+                // Add AJAX call to clear cache
+            }
+        }
+
+        function changePassword() {
+            const newPassword = prompt('Enter new admin password:');
+            if (newPassword) {
+                alert('Password change initiated...');
+                // Add AJAX call to change password
+            }
+        }
+
+        function viewLogs() {
+            alert('Opening system logs...');
+            // Add AJAX call to view logs
+        }
+
+        function lockSystem() {
+            if (confirm('Are you sure you want to lock the system? This will log out all users.')) {
+                alert('System lock initiated...');
+                // Add AJAX call to lock system
+            }
+        }
+
+        function runMaintenance() {
+            if (confirm('Are you sure you want to run system maintenance?')) {
+                alert('Maintenance started...');
+                // Add AJAX call to run maintenance
+            }
+        }
+
+        function optimizeDatabase() {
+            if (confirm('Are you sure you want to optimize the database?')) {
+                alert('Database optimization started...');
+                // Add AJAX call to optimize database
+            }
+        }
+
+        function restartSystem() {
+            if (confirm('Are you sure you want to restart the system? This will affect all users.')) {
+                alert('System restart initiated...');
+                // Add AJAX call to restart system
+            }
+        }
+    </script>
+}

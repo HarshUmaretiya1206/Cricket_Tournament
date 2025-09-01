@@ -1,0 +1,119 @@
+@model IEnumerable<CricHeroesClone.Models.Tournament>
+@{
+    ViewData["Title"] = "Tournament Management";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Tournament Management</h1>
+        </div>
+    </div>
+
+    <!-- Tournament Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total Tournaments</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-trophy fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournaments Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">All Tournaments</h6>
+                    <a href="@Url.Action("Create", "Tournament")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add New Tournament
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tournament Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var tournament in Model)
+                                {
+                                    var status = "Active";
+                                    var statusClass = "success";
+                                    
+                                    if (tournament.StartDate.HasValue && tournament.StartDate.Value > DateTime.Now)
+                                    {
+                                        status = "Upcoming";
+                                        statusClass = "info";
+                                    }
+                                    else if (tournament.EndDate.HasValue && tournament.EndDate.Value < DateTime.Now)
+                                    {
+                                        status = "Completed";
+                                        statusClass = "secondary";
+                                    }
+                                    
+                                    <tr>
+                                        <td>@tournament.Id</td>
+                                        <td>@tournament.Name</td>
+                                        <td>@(tournament.StartDate?.ToString("MMM dd, yyyy") ?? "TBD")</td>
+                                        <td>@(tournament.EndDate?.ToString("MMM dd, yyyy") ?? "TBD")</td>
+                                        <td>
+                                            <span class="badge badge-@statusClass">@status</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="@Url.Action("Edit", "Tournament", new { id = tournament.Id })" class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                                <a href="@Url.Action("Index", "Team")" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-flag"></i> Teams
+                                                </a>
+                                                <a href="@Url.Action("Index", "Match")" class="btn btn-success btn-sm">
+                                                    <i class="fas fa-gamepad"></i> Matches
+                                                </a>
+                                                <form method="post" action="@Url.Action("Delete", "Tournament")" style="display: inline;" 
+                                                      onsubmit="return confirm('Are you sure you want to delete this tournament?')">
+                                                    <input type="hidden" name="id" value="@tournament.Id" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            console.log('Tournament Management loaded');
+        });
+    </script>
+}

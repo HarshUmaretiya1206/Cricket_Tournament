@@ -8,7 +8,10 @@ namespace CricHeroesClone.Repository
         Task AddAsync(Player player);
         Task DeleteAsync(int playerId);
 
-        // Add this method
+       
         Task<IEnumerable<Team>> GetTeamsAsync();
+        Task<int> GetTotalPlayersAsync();
+        Task<IEnumerable<Player>> GetPlayersByTeamAsync(int teamId);
+        Task<Player?> GetByIdAsync(int playerId);
     }
 }

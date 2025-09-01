@@ -12,6 +12,7 @@
 
         public DateTime? MatchDate { get; set; }
         public string? Venue { get; set; }
+        public string Status { get; set; } = "Scheduled"; // Scheduled, Live, Completed, Cancelled
         public int? TossWinnerTeamId { get; set; }
         public string? Result { get; set; }
 

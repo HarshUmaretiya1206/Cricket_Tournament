@@ -72,5 +72,56 @@ namespace CricHeroesClone.Repository
             }
             return teams;
         }
+
+        public async Task<int> GetTotalPlayersAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT COUNT(*) FROM Players", con);
+            await con.OpenAsync();
+            return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+
+        public async Task<IEnumerable<Player>> GetPlayersByTeamAsync(int teamId)
+        {
+            var list = new List<Player>();
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Players WHERE TeamId = @TeamId", con);
+            cmd.Parameters.AddWithValue("@TeamId", teamId);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                list.Add(new Player
+                {
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    Role = reader.IsDBNull("Role") ? null : reader.GetString("Role"),
+                    TeamId = reader.GetInt32("TeamId"),
+                    TeamName = reader.GetString("TeamName")
+                });
+            }
+            return list;
+        }
+
+        public async Task<Player?> GetByIdAsync(int playerId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Players WHERE Id = @Id", con);
+            cmd.Parameters.AddWithValue("@Id", playerId);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Player
+                {
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    Role = reader.IsDBNull("Role") ? null : reader.GetString("Role"),
+                    TeamId = reader.GetInt32("TeamId"),
+                    TeamName = reader.GetString("TeamName")
+                };
+            }
+            return null;
+        }
     }
 }

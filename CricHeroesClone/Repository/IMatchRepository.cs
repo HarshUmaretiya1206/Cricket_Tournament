@@ -12,5 +12,9 @@ namespace CricHeroesClone.Repository
 
         // Add this ↓
         Task<MatchScoreDto?> GetScoreAsync(int matchId);
+        Task<int> GetTotalMatchesAsync();
+        Task<IEnumerable<Match>> GetLiveMatchesAsync();
+        Task<IEnumerable<Match>> GetUpcomingMatchesAsync();
+        Task<IEnumerable<Match>> GetUpcomingMatchesByTeamAsync(int teamId);
     }
 }

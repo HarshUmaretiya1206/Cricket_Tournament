@@ -53,5 +53,53 @@ namespace CricHeroesClone.Repository
             await con.OpenAsync();
             await cmd.ExecuteNonQueryAsync();
         }
+
+        public async Task<int> GetTotalTeamsAsync()
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT COUNT(*) FROM Teams", con);
+            await con.OpenAsync();
+            return Convert.ToInt32(await cmd.ExecuteScalarAsync());
+        }
+
+        public async Task<Team?> GetTeamByCaptainAsync(int captainId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Teams WHERE CaptainID = @CaptainID", con);
+            cmd.Parameters.AddWithValue("@CaptainID", captainId);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Team
+                {
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    TournamentId = reader.GetInt32("TournamentId"),
+                    CaptainId = reader.GetInt32("CaptainID")
+                };
+            }
+            return null;
+        }
+
+        public async Task<Team?> GetByIdAsync(int teamId)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SELECT * FROM Teams WHERE Id = @Id", con);
+            cmd.Parameters.AddWithValue("@Id", teamId);
+            await con.OpenAsync();
+            using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return new Team
+                {
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    TournamentId = reader.GetInt32("TournamentId"),
+                    CaptainId = reader.GetInt32("CaptainID")
+                };
+            }
+            return null;
+        }
     }
 }
