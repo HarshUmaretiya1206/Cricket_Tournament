@@ -25,5 +25,17 @@
         public string TeamBName { get; set; } = string.Empty;
         public int ScoreTeamA { get; set; }
         public int ScoreTeamB { get; set; }
+
+        // Live scoring state
+        public int CurrentInnings { get; set; } = 1; // 1 or 2
+        public int BattingTeamId { get; set; }
+        public int BowlingTeamId { get; set; }
+        public int CurrentRuns { get; set; }
+        public int CurrentWickets { get; set; }
+        public float CurrentOvers { get; set; }
+        public int TargetRuns { get; set; }
+        public int? WinningTeamId { get; set; }
+        public string TossDecision { get; set; } = string.Empty; // Bat or Bowl
+        public DateTime LastUpdated { get; set; } = DateTime.Now;
     }
 }

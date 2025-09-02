@@ -1,35 +1,494 @@
-﻿@{
+﻿@using System.Linq
+@using CricHeroesClone.Models
+@{
     ViewData["Title"] = "Score Match";
 }
-<h2>Score Match</h2>
 
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-success">@TempData["Message"]</div>
-}
-
-<form method="post" asp-action="RecordBall">
-    <input type="hidden" name="matchId" value="@ViewBag.MatchId" />
+<div class="container-fluid">
     <div class="row">
-        <div class="col-md-4 mb-3">
-            <label>Batsman ID</label>
-            <input name="batsmanId" type="number" class="form-control" />
-        </div>
-        <div class="col-md-4 mb-3">
-            <label>Bowler ID</label>
-            <input name="bowlerId" type="number" class="form-control" />
-        </div>
-        <div class="col-md-2 mb-3">
-            <label>Runs</label>
-            <input name="runs" type="number" class="form-control" />
-        </div>
-        <div class="col-md-2 mb-3">
-            <label>Wicket?</label>
-            <select name="isWicket" class="form-select">
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-            </select>
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-edit text-success"></i> Score Match</h2>
+                <div>
+                    <a href="@Url.Action("LiveMatches", "Scorer")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Back to Live Matches
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-    <button class="btn btn-success">Record Ball</button>
-</form>
+
+    @if (ViewBag.Match != null)
+    {
+        var match = ViewBag.Match;
+        
+        <!-- Match Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-cricket-bat-ball"></i> @match.TeamAName vs @match.TeamBName
+                                </h4>
+                                <small>@match.TournamentName - @match.Venue</small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-warning fs-6">@match.Status</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Score Display -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="fas fa-chart-line"></i> Current Score</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="score-box">
+                                    <h3 class="text-primary">@match.CurrentRuns</h3>
+                                    <small class="text-muted">Runs</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="score-box">
+                                    <h3 class="text-danger">@match.CurrentWickets</h3>
+                                    <small class="text-muted">Wickets</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="score-box">
+                                    <h3 class="text-success">@match.CurrentOvers</h3>
+                                    <small class="text-muted">Overs</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="score-box">
+                                    <h3 class="text-warning">@match.TargetRuns</h3>
+                                    <small class="text-muted">Target</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Innings Management -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="mb-0"><i class="fas fa-play-circle"></i> Innings Management</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Current Innings: @match.CurrentInnings</h6>
+                                <p><strong>Batting:</strong> @(match.CurrentInnings == 1 ? match.TeamAName : match.TeamBName)</p>
+                                <p><strong>Bowling:</strong> @(match.CurrentInnings == 1 ? match.TeamBName : match.TeamAName)</p>
+                            </div>
+                            <div class="col-md-6">
+                                <form method="post" asp-action="StartInnings" class="mb-2">
+                                    <input type="hidden" name="matchId" value="@match.Id" />
+                                    <input type="hidden" name="innings" value="@(match.CurrentInnings + 1)" />
+                                    <input type="hidden" name="battingTeamId" value="@(match.CurrentInnings == 1 ? match.TeamBId : match.TeamAId)" />
+                                    <input type="hidden" name="bowlingTeamId" value="@(match.CurrentInnings == 1 ? match.TeamAId : match.TeamBId)" />
+                                    <button type="submit" class="btn btn-success btn-sm" @(match.CurrentInnings >= 2 ? "disabled" : "")>
+                                        <i class="fas fa-play"></i> Start Innings @(match.CurrentInnings + 1)
+                                    </button>
+                                </form>
+                                
+                                <form method="post" asp-action="EndInnings">
+                                    <input type="hidden" name="matchId" value="@match.Id" />
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-stop"></i> End Current Innings
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ball Recording Form -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-info">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-plus-circle"></i> Record Ball</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-action="RecordBall" id="ballForm">
+                            <input type="hidden" name="matchId" value="@match.Id" />
+                            <input type="hidden" name="innings" value="@match.CurrentInnings" />
+                            
+                            <div class="row">
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Over</label>
+                                    <input name="overNumber" type="number" class="form-control" min="1" required />
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Ball</label>
+                                    <input name="ballNumber" type="number" class="form-control" min="1" max="6" required />
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Runs</label>
+                                    <input name="runs" type="number" class="form-control" min="0" max="6" value="0" required />
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Batsman</label>
+                                    <select name="batsmanId" class="form-select" required>
+                                        <option value="">Select Batsman</option>
+                                        @if (ViewBag.Players != null)
+                                        {
+                                            foreach (var player in ViewBag.Players)
+                                            {
+                                                <option value="@player.Id">@player.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Bowler</label>
+                                    <select name="bowlerId" class="form-select" required>
+                                        <option value="">Select Bowler</option>
+                                        @if (ViewBag.Players != null)
+                                        {
+                                            foreach (var player in ViewBag.Players)
+                                            {
+                                                <option value="@player.Id">@player.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label class="form-label">Wicket?</label>
+                                    <select name="isWicket" class="form-select" id="isWicket">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Wicket Details (Hidden by default) -->
+                            <div class="row" id="wicketDetails" style="display: none;">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Wicket Type</label>
+                                    <select name="wicketType" class="form-select">
+                                        <option value="Bowled">Bowled</option>
+                                        <option value="Caught">Caught</option>
+                                        <option value="LBW">LBW</option>
+                                        <option value="Run Out">Run Out</option>
+                                        <option value="Stumped">Stumped</option>
+                                        <option value="Hit Wicket">Hit Wicket</option>
+                                        <option value="Obstructing">Obstructing</option>
+                                        <option value="Handled Ball">Handled Ball</option>
+                                        <option value="Timed Out">Timed Out</option>
+                                        <option value="Retired Out">Retired Out</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Wicket Taker</label>
+                                    <select name="wicketTakerId" class="form-select">
+                                        <option value="">Select Player</option>
+                                        @if (ViewBag.Players != null)
+                                        {
+                                            foreach (var player in ViewBag.Players)
+                                            {
+                                                <option value="@player.Id">@player.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Wicket Description</label>
+                                    <input name="wicketDescription" type="text" class="form-control" placeholder="e.g., Caught by Smith at mid-wicket" />
+                                </div>
+                            </div>
+
+                            <!-- Extras -->
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Wide Ball?</label>
+                                    <select name="isWide" class="form-select" id="isWide">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">No Ball?</label>
+                                    <select name="isNoBall" class="form-select" id="isNoBall">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Bye?</label>
+                                    <select name="isBye" class="form-select" id="isBye">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Leg Bye?</label>
+                                    <select name="isLegBye" class="form-select" id="isLegBye">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Extra Runs</label>
+                                    <input name="extraRuns" type="number" class="form-control" min="0" value="0" />
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Commentary</label>
+                                    <input name="commentary" type="text" class="form-control" placeholder="e.g., Beautiful cover drive for four!" />
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-save"></i> Record Ball
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ball by Ball History -->
+        var ballsList = ViewBag.Balls as IEnumerable<BallByBall>;
+        @if (ballsList != null && ballsList.Any())
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-secondary">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="mb-0"><i class="fas fa-history"></i> Ball by Ball History</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Ball</th>
+                                            <th>Batsman</th>
+                                            <th>Bowler</th>
+                                            <th>Runs</th>
+                                            <th>Extras</th>
+                                            <th>Wicket</th>
+                                            <th>Commentary</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var ball in ballsList.OrderByDescending(b=>b.Timestamp))
+                                        {
+                                            <tr>
+                                                <td><strong>@ball.OverNumber.@ball.BallNumber</strong></td>
+                                                <td>@ball.BatsmanName</td>
+                                                <td>@ball.BowlerName</td>
+                                                <td>
+                                                    @if (ball.IsWicket)
+                                                    {
+                                                        <span class="badge bg-danger">W</span>
+                                                    }
+                                                    else if (ball.IsWide)
+                                                    {
+                                                        <span class="badge bg-warning text-dark">Wide +@ball.ExtraRuns</span>
+                                                    }
+                                                    else if (ball.IsNoBall)
+                                                    {
+                                                        <span class="badge bg-warning text-dark">No Ball +@ball.ExtraRuns</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-success">@ball.Runs</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (ball.IsExtra)
+                                                    {
+                                                        <small class="text-muted">@ball.ExtraType</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (ball.IsWicket)
+                                                    {
+                                                        <span class="badge bg-danger">@ball.WicketType</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(ball.Commentary))
+                                                    {
+                                                        <small>@ball.Commentary</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">-</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button type="button" class="btn btn-outline-warning btn-sm" 
+                                                                onclick="editBall(@ball.Id)">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <form method="post" asp-action="DeleteBall" style="display: inline;">
+                                                            <input type="hidden" name="ballId" value="@ball.Id" />
+                                                            <input type="hidden" name="matchId" value="@match.Id" />
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                                    onclick="return confirm('Are you sure you want to delete this ball?')">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Messages -->
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <h4>Match Not Found</h4>
+            <p>The requested match could not be found.</p>
+        </div>
+    }
+</div>
+
+<style>
+.score-box {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+}
+
+.score-box h3 {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-group-sm .btn {
+    font-size: 0.75em;
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.5px;
+}
+
+.badge {
+    font-size: 0.75em;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide wicket details based on wicket selection
+    const isWicketSelect = document.getElementById('isWicket');
+    const wicketDetails = document.getElementById('wicketDetails');
+    
+    isWicketSelect.addEventListener('change', function() {
+        if (this.value === 'true') {
+            wicketDetails.style.display = 'block';
+        } else {
+            wicketDetails.style.display = 'none';
+        }
+    });
+
+    // Auto-calculate next ball number
+    const overInput = document.querySelector('input[name="overNumber"]');
+    const ballInput = document.querySelector('input[name="ballNumber"]');
+    
+    overInput.addEventListener('change', function() {
+        // Reset ball number when over changes
+        ballInput.value = 1;
+    });
+
+    // Auto-advance to next ball after recording
+    const ballForm = document.getElementById('ballForm');
+    ballForm.addEventListener('submit', function() {
+        // Store current values for auto-advance
+        const currentOver = parseInt(overInput.value) || 1;
+        const currentBall = parseInt(ballInput.value) || 1;
+        
+        // Auto-advance logic will be handled after successful submission
+        setTimeout(() => {
+            if (currentBall < 6) {
+                ballInput.value = currentBall + 1;
+            } else {
+                overInput.value = currentOver + 1;
+                ballInput.value = 1;
+            }
+        }, 1000);
+    });
+});
+
+function editBall(ballId) {
+    // Implementation for editing balls
+    alert('Edit functionality for ball ' + ballId + ' will be implemented here');
+}
+</script>

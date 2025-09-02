@@ -28,7 +28,10 @@ namespace CricHeroesClone.Repository
                     Id = reader.GetInt32(0),
                     Name = reader.GetString(1),
                     Role = reader.IsDBNull(2) ? null : reader.GetString(2),
-                    TeamName = reader.GetString(3)
+                    TeamName = reader.GetString(3),
+                    BattingStyle = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    BowlingStyle = reader.IsDBNull(5) ? null : reader.GetString(5),
+                    TeamId = reader.GetInt32(6)
                 });
             }
             return list;
@@ -41,6 +44,20 @@ namespace CricHeroesClone.Repository
             cmd.Parameters.AddWithValue("@Name", player.Name);
             cmd.Parameters.AddWithValue("@Role", (object?)player.Role ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@TeamId", player.TeamId);
+            await con.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        public async Task UpdateAsync(Player player)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("UPDATE Players SET Name = @Name, Role = @Role, TeamId = @TeamId, BattingStyle = @BattingStyle, BowlingStyle = @BowlingStyle WHERE Id = @Id", con);
+            cmd.Parameters.AddWithValue("@Id", player.Id);
+            cmd.Parameters.AddWithValue("@Name", player.Name);
+            cmd.Parameters.AddWithValue("@Role", (object?)player.Role ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@TeamId", player.TeamId);
+            cmd.Parameters.AddWithValue("@BattingStyle", (object?)player.BattingStyle ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@BowlingStyle", (object?)player.BowlingStyle ?? DBNull.Value);
             await con.OpenAsync();
             await cmd.ExecuteNonQueryAsync();
         }
@@ -85,7 +102,7 @@ namespace CricHeroesClone.Repository
         {
             var list = new List<Player>();
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Players WHERE TeamId = @TeamId", con);
+            using var cmd = new SqlCommand("SELECT Id, Name, Role, TeamId, BattingStyle, BowlingStyle FROM Players WHERE TeamId = @TeamId", con);
             cmd.Parameters.AddWithValue("@TeamId", teamId);
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
@@ -93,11 +110,12 @@ namespace CricHeroesClone.Repository
             {
                 list.Add(new Player
                 {
-                    Id = reader.GetInt32("Id"),
-                    Name = reader.GetString("Name"),
-                    Role = reader.IsDBNull("Role") ? null : reader.GetString("Role"),
-                    TeamId = reader.GetInt32("TeamId"),
-                    TeamName = reader.GetString("TeamName")
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Role = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    TeamId = reader.GetInt32(3),
+                    BattingStyle = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    BowlingStyle = reader.IsDBNull(5) ? null : reader.GetString(5)
                 });
             }
             return list;
@@ -106,7 +124,7 @@ namespace CricHeroesClone.Repository
         public async Task<Player?> GetByIdAsync(int playerId)
         {
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Players WHERE Id = @Id", con);
+            using var cmd = new SqlCommand("SELECT Id, Name, Role, TeamId, BattingStyle, BowlingStyle FROM Players WHERE Id = @Id", con);
             cmd.Parameters.AddWithValue("@Id", playerId);
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
@@ -114,11 +132,12 @@ namespace CricHeroesClone.Repository
             {
                 return new Player
                 {
-                    Id = reader.GetInt32("Id"),
-                    Name = reader.GetString("Name"),
-                    Role = reader.IsDBNull("Role") ? null : reader.GetString("Role"),
-                    TeamId = reader.GetInt32("TeamId"),
-                    TeamName = reader.GetString("TeamName")
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Role = reader.IsDBNull(2) ? null : reader.GetString(2),
+                    TeamId = reader.GetInt32(3),
+                    BattingStyle = reader.IsDBNull(4) ? null : reader.GetString(4),
+                    BowlingStyle = reader.IsDBNull(5) ? null : reader.GetString(5)
                 };
             }
             return null;

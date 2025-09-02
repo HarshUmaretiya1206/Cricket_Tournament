@@ -11,5 +11,8 @@ namespace CricHeroesClone.Repository
         Task UpdateUserRoleAsync(int userId, string newRole);
         Task DeleteAsync(int userId);
         Task<User?> GetByIdAsync(int userId);
+        
+        Task EnsureDefaultAdminAsync();
+        Task<User?> GetByUsernameAsync(string username);
     }
 }

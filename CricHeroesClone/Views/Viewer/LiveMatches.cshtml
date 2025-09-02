@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Live Matches";
+}
+
+@* Simple handoff view that redirects viewers to the shared Live/Index *@
+<script>
+    window.location.href = '@Url.Action("Index", "Live")';
+</script>
+
+<noscript>
+    <div class="container mt-4">
+        <div class="alert alert-info">JavaScript is disabled. Click below to view live matches.</div>
+        <a class="btn btn-primary" href="@Url.Action("Index", "Live")">Go to Live Matches</a>
+    </div>
+</noscript>
+

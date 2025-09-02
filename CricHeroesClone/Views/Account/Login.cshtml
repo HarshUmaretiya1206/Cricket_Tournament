@@ -1,11 +1,160 @@
 ﻿@{
     ViewData["Title"] = "Login";
 }
-<h2>Login</h2>
-<form method="post" asp-action="Login">
-    <div class="mb-3"><label>Username</label><input name="username" class="form-control" /></div>
-    <div class="mb-3"><label>Password</label><input name="password" type="password" class="form-control" /></div>
-    <button class="btn btn-primary">Login</button>
-</form>
-<p class="text-danger">@ViewBag.Error</p>
-<p>Register: <a asp-action="Register">Register</a></p>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg mt-5">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-cricket-bat-ball"></i> CricHeroes Login
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> @ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+                    
+                    @if (ViewBag.Success != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> @ViewBag.Success
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="Login" id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label fw-bold text-dark">
+                                <i class="fas fa-user"></i> Username
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="username" 
+                                   name="username" 
+                                   placeholder="Enter your username"
+                                   required 
+                                   autocomplete="username" />
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-bold text-dark">
+                                <i class="fas fa-lock"></i> Password
+                            </label>
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Enter your password"
+                                   required 
+                                   autocomplete="current-password" />
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Don't have an account?</p>
+                        <a href="@Url.Action("Register", "Account")" class="btn btn-outline-secondary">
+                            <i class="fas fa-user-plus"></i> Register Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Debug Information (remove in production) -->
+            @if (ViewBag.DebugInfo != null)
+            {
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="fas fa-bug"></i> Debug Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0">@ViewBag.DebugInfo</pre>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.form-label {
+    color: #495057 !important;
+    font-size: 0.95rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    
+    // Auto-focus on username field
+    usernameInput.focus();
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+            e.preventDefault();
+            alert('Please fill in all fields');
+            return false;
+        }
+    });
+    
+    // Show loading state
+    form.addEventListener('submit', function() {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        submitBtn.disabled = true;
+    });
+});
+</script>

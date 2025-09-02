@@ -15,6 +15,12 @@ namespace CricHeroesClone.Controllers
             _matchRepo = matchRepo;
         }
 
+        // Redirect default index to Live to avoid 404s from legacy links
+        public IActionResult Index()
+        {
+            return RedirectToAction("Live");
+        }
+
         // Live score page with match selection
         public async Task<IActionResult> Live()
         {

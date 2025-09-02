@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Team Standings";
+}
+
+@* Redirect to the unified standings page *@
+<script>
+    window.location.href = '@Url.Action("TeamStandings", "Live")';
+    </script>
+
+<noscript>
+    <div class="container mt-4">
+        <div class="alert alert-info">JavaScript is disabled. Click below to view team standings.</div>
+        <a class="btn btn-primary" href="@Url.Action("TeamStandings", "Live")">Go to Team Standings</a>
+    </div>
+</noscript>
+

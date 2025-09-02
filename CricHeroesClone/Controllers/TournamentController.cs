@@ -47,8 +47,7 @@ namespace CricHeroesClone.Controllers
         {
             if (ModelState.IsValid)
             {
-                // For now, we'll just redirect since UpdateAsync is not implemented
-                // TODO: Implement UpdateAsync in TournamentRepository
+                await _tournamentRepository.UpdateAsync(tournament);
                 return RedirectToAction("Index");
             }
             return View(tournament);
@@ -56,7 +55,15 @@ namespace CricHeroesClone.Controllers
 
         public async Task<IActionResult> Delete(int id)
         {
+            // Prevent FK errors by blocking delete when teams exist
+            if (await _tournamentRepository.HasTeamsAsync(id))
+            {
+                TempData["Error"] = "Cannot delete tournament while teams exist. Remove teams first.";
+                return RedirectToAction("Index");
+            }
+
             await _tournamentRepository.DeleteAsync(id);
+            TempData["Message"] = "Tournament deleted.";
             return RedirectToAction("Index");
         }
     }

@@ -1,17 +1,165 @@
-﻿@model IEnumerable<CricHeroesClone.Models.Match>
-<h2>Live Matches</h2>
-<table class="table">
-	<thead><tr><th>Match</th><th>Score</th><th></th></tr></thead>
+﻿@{
+    ViewData["Title"] = "Live Cricket";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-broadcast-tower text-danger"></i> Live Cricket</h2>
+                <div>
+                    <a href="@Url.Action("TeamStandings", "Live")" class="btn btn-outline-primary">
+                        <i class="fas fa-trophy"></i> Team Standings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Matches Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-fire"></i> Live Matches</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.LiveMatches != null && ((IEnumerable<dynamic>)ViewBag.LiveMatches).Any())
+                    {
+                        <div class="row">
+                            @foreach (var match in ViewBag.LiveMatches)
+                            {
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card h-100 border-danger">
+                                        <div class="card-body text-center">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="badge bg-danger">LIVE</span>
+                                                <small class="text-muted">@match.Venue</small>
+                                            </div>
+                                            <h6 class="card-title">@match.TeamAName vs @match.TeamBName</h6>
+                                            <div class="score-display mb-2">
+                                                <div class="team-score">
+                                                    <strong>@match.TeamAName:</strong> @match.ScoreTeamA
+                                                </div>
+                                                <div class="team-score">
+                                                    <strong>@match.TeamBName:</strong> @match.ScoreTeamB
+                                                </div>
+                                            </div>
+                                            <div class="match-info mb-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar"></i> @match.MatchDate?.ToString("MMM dd, yyyy")
+                                                </small>
+                                            </div>
+                                            <div class="btn-group w-100">
+                                                <a href="@Url.Action("Viewer", "Live", new { matchId = match.Id })" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> Watch Live
+                                                </a>
+                                                <a href="@Url.Action("MatchDetails", "Live", new { matchId = match.Id })" 
+                                                   class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-info-circle"></i> Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-cricket-bat-ball fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Live Matches</h5>
+                            <p class="text-muted">There are currently no live matches.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Matches Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Upcoming Matches</h5>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.UpcomingMatches != null && ((IEnumerable<dynamic>)ViewBag.UpcomingMatches).Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Match</th>
+                                        <th>Venue</th>
+                                        <th>Date & Time</th>
+                                        <th>Tournament</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
 	<tbody>
-		@foreach (var m in Model)
+                                    @foreach (var match in ViewBag.UpcomingMatches)
 		{
 			<tr>
-				<td>@m.TeamAName vs @m.TeamBName</td>
-				<td>@m.ScoreTeamA - @m.ScoreTeamB</td>
-				<td>
-					<a class="btn btn-sm btn-primary" asp-action="Viewer" asp-route-matchId="@m.Id">View</a>
+                                            <td>
+                                                <strong>@match.TeamAName vs @match.TeamBName</strong>
+                                            </td>
+                                            <td>@match.Venue</td>
+                                            <td>
+                                                <i class="fas fa-calendar"></i> @match.MatchDate?.ToString("MMM dd, yyyy HH:mm")
+                                            </td>
+                                            <td>@match.TournamentName</td>
+                                            <td>
+                                                <a href="@Url.Action("MatchDetails", "Live", new { matchId = match.Id })" 
+                                                   class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-info-circle"></i> Details
+                                                </a>
 				</td>
 			</tr>
 		}
 	</tbody>
 </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Upcoming Matches</h5>
+                            <p class="text-muted">There are no upcoming matches scheduled.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.score-display {
+    font-size: 1.1em;
+}
+
+.team-score {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.match-info {
+    font-size: 0.9em;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>

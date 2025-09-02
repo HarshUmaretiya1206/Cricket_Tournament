@@ -1,0 +1,340 @@
+/* Live Updates CSS for CricHeroes */
+
+/* Live Indicator */
+.live-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 9999;
+    display: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.live-indicator.pulse {
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Updated Elements Animation */
+.updated {
+    animation: highlight 1s ease-in-out;
+}
+
+@keyframes highlight {
+    0% { background-color: transparent; }
+    50% { background-color: #fff3cd; }
+    100% { background-color: transparent; }
+}
+
+/* New Commentary Items */
+.new-commentary {
+    animation: slideIn 0.5s ease-out;
+    border-left: 4px solid #28a745;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Live Score Display */
+.live-score-display {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 15px 0;
+    transition: all 0.3s ease;
+}
+
+.live-score-display:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.15);
+}
+
+.live-score-display.live {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+}
+
+/* Score Numbers */
+.score-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #495057;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.score-number.live {
+    color: #dc3545;
+    animation: scorePulse 2s infinite;
+}
+
+@keyframes scorePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Match Status Badges */
+.match-status {
+    transition: all 0.3s ease;
+}
+
+.match-status.live {
+    animation: statusBlink 2s infinite;
+}
+
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Ball by Ball Commentary */
+.commentary-container {
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #6c757d #f8f9fa;
+}
+
+.commentary-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.commentary-container::-webkit-scrollbar-track {
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.commentary-container::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 4px;
+}
+
+.commentary-container::-webkit-scrollbar-thumb:hover {
+    background: #495057;
+}
+
+.commentary-item {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+.commentary-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.commentary-item:last-child {
+    border-bottom: none;
+}
+
+/* Ball Results */
+.ball-result {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 2px 0;
+    font-size: 0.9em;
+}
+
+.ball-result.wicket {
+    background-color: #dc3545;
+    color: white;
+    animation: wicketShake 0.5s ease-in-out;
+}
+
+@keyframes wicketShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.ball-result.wide {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.ball-result.noball {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.ball-result.runs {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Live Updates Panel */
+.live-updates-panel {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.live-updates-header {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.live-updates-body {
+    padding: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.live-updates-footer {
+    padding: 10px 15px;
+    border-top: 1px solid #dee2e6;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .live-updates-panel {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+    
+    .score-number {
+        font-size: 2rem;
+    }
+    
+    .live-score-display {
+        padding: 15px;
+    }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification Styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Team Standings Enhancements */
+.team-standing-row {
+    transition: all 0.3s ease;
+}
+
+.team-standing-row:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+}
+
+.team-standing-row.qualified {
+    border-left: 4px solid #28a745;
+}
+
+.team-standing-row.relegation {
+    border-left: 4px solid #dc3545;
+}
+
+/* Match Card Enhancements */
+.match-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.match-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.match-card.live {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+}
+
+/* Live Score Counter */
+.live-score-counter {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #dc3545;
+}
+
+.live-score-counter.updating {
+    animation: counterUpdate 0.5s ease-in-out;
+}
+
+@keyframes counterUpdate {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}

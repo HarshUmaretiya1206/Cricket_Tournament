@@ -8,8 +8,10 @@ namespace CricHeroesClone.Repository
     {
         Task<IEnumerable<Tournament>> GetAllAsync();
         Task AddAsync(Tournament tournament);
+        Task UpdateAsync(Tournament tournament);
         Task DeleteAsync(int id);
         Task<int> GetTotalTournamentsAsync();
         Task<Tournament?> GetByIdAsync(int id);
+        Task<bool> HasTeamsAsync(int tournamentId);
     }
 }

@@ -34,6 +34,15 @@ namespace CricHeroesClone.Repository
             }
         }
 
+        public async Task UpdateAsync(Tournament tournament)
+        {
+            var query = "UPDATE Tournaments SET Name = @Name, StartDate = @StartDate, EndDate = @EndDate WHERE Id = @Id";
+            using (var connection = _context.CreateConnection())
+            {
+                await connection.ExecuteAsync(query, tournament);
+            }
+        }
+
         public async Task DeleteAsync(int id)
         {
             var query = "DELETE FROM Tournaments WHERE Id = @Id";
@@ -58,6 +67,16 @@ namespace CricHeroesClone.Repository
             using (var connection = _context.CreateConnection())
             {
                 return await connection.QueryFirstOrDefaultAsync<Tournament>(query, new { Id = id });
+            }
+        }
+
+        public async Task<bool> HasTeamsAsync(int tournamentId)
+        {
+            const string sql = "SELECT CASE WHEN EXISTS (SELECT 1 FROM Teams WHERE TournamentId = @Id) THEN 1 ELSE 0 END";
+            using (var connection = _context.CreateConnection())
+            {
+                var count = await connection.ExecuteScalarAsync<int>(sql, new { Id = tournamentId });
+                return count == 1;
             }
         }
     }

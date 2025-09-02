@@ -38,6 +38,19 @@ namespace CricHeroesClone.Repository
             return await con.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Users");
         }
 
+        public async Task EnsureDefaultAdminAsync()
+        {
+            using var con = _context.CreateConnection();
+            var exists = await con.ExecuteScalarAsync<int>("SELECT COUNT(1) FROM Users WHERE UserName = @u", new { u = "admin" });
+            if (exists == 0)
+            {
+                await con.ExecuteAsync(
+                    "spRegisterUser",
+                    new { UserName = "admin", Email = "admin@cricheroes.com", PasswordHash = "admin123", Role = "Admin" },
+                    commandType: System.Data.CommandType.StoredProcedure);
+            }
+        }
+
         public async Task UpdateUserRoleAsync(int userId, string newRole)
         {
             using var con = _context.CreateConnection();
@@ -57,6 +70,13 @@ namespace CricHeroesClone.Repository
             using var con = _context.CreateConnection();
             return await con.QueryFirstOrDefaultAsync<User>("SELECT * FROM Users WHERE Id = @Id",
                 new { Id = userId });
+        }
+
+        public async Task<User?> GetByUsernameAsync(string username)
+        {
+            using var con = _context.CreateConnection();
+            return await con.QueryFirstOrDefaultAsync<User>("SELECT * FROM Users WHERE UserName = @UserName",
+                new { UserName = username });
         }
     }
 }

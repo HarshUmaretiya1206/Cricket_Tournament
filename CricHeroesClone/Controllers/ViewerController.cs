@@ -60,8 +60,8 @@ namespace CricHeroesClone.Controllers
             var role = HttpContext.Session.GetString("UserRole");
             if (role != "Viewer") return Forbid();
             
-            var teams = await _teamRepo.GetAllAsync();
-            return View(teams);
+            // Reuse existing Live/TeamStandings view if available
+            return RedirectToAction("TeamStandings", "Live");
         }
     }
 }

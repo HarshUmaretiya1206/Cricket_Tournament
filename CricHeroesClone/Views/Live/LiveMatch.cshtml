@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Live Match";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="fas fa-broadcast-tower text-primary"></i> Live Match</h3>
+            <a href="@Url.Action("Index", "Live")" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-home"></i> All Live Matches
+            </a>
+        </div>
+    </div>
+
+    @if (ViewBag.Match != null)
+    {
+        var match = ViewBag.Match;
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <div class="d-flex justify-content-between">
+                            <span>@match.TournamentName</span>
+                            <span class="badge bg-success">@match.Status</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <h5 class="text-dark">@match.TeamAName</h5>
+                                <div class="display-score">@ViewBag.ScoreA</div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-dark">@match.TeamBName</h5>
+                                <div class="display-score">@ViewBag.ScoreB</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3 text-muted">
+                            <small><i class="far fa-clock"></i> @match.MatchDate?.ToString("MMM dd, yyyy HH:mm") • @match.Venue</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0"><i class="fas fa-comment-dots"></i> Commentary</h6>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.Balls != null)
+                        {
+                            <div class="commentary-list">
+                                @foreach (var ball in ViewBag.Balls)
+                                {
+                                    <div class="commentary-item">
+                                        <div class="d-flex justify-content-between">
+                                            <strong>@ball.OverNumber.@ball.BallNumber</strong>
+                                            <small class="text-muted">@ball.Timestamp.ToString("HH:mm")</small>
+                                        </div>
+                                        <div>
+                                            @if (ball.IsWicket)
+                                            {
+                                                <span class="badge bg-danger">W</span>
+                                            }
+                                            else if (ball.IsWide)
+                                            {
+                                                <span class="badge bg-warning text-dark">Wide +@ball.ExtraRuns</span>
+                                            }
+                                            else if (ball.IsNoBall)
+                                            {
+                                                <span class="badge bg-warning text-dark">No Ball +@ball.ExtraRuns</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@ball.Runs</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(ball.Commentary))
+                                            {
+                                                <small class="ms-2 text-muted">@ball.Commentary</small>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">No commentary yet.</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger">Match not found.</div>
+    }
+</div>
+
+<style>
+.display-score { font-size: 2rem; font-weight: 700; color: #0d6efd; }
+.commentary-item { padding: 10px; border-bottom: 1px solid #e9ecef; }
+.commentary-item:last-child { border-bottom: 0; }
+</style>

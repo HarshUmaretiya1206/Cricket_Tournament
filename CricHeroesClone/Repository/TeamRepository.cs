@@ -47,6 +47,18 @@ namespace CricHeroesClone.Repository
             await cmd.ExecuteNonQueryAsync();
         }
 
+        public async Task UpdateAsync(Team team)
+        {
+            using var con = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("UPDATE Teams SET Name = @Name, TournamentId = @TournamentId, CaptainId = @CaptainId WHERE Id = @Id", con);
+            cmd.Parameters.AddWithValue("@Id", team.Id);
+            cmd.Parameters.AddWithValue("@Name", team.Name);
+            cmd.Parameters.AddWithValue("@TournamentId", team.TournamentId);
+            cmd.Parameters.AddWithValue("@CaptainId", (object?)team.CaptainId ?? DBNull.Value);
+            await con.OpenAsync();
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         // Match interface signature: DeleteAsync(int teamId)
         public async Task DeleteAsync(int teamId)
         {
@@ -68,8 +80,8 @@ namespace CricHeroesClone.Repository
         public async Task<Team?> GetTeamByCaptainAsync(int captainId)
         {
             using var con = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SELECT * FROM Teams WHERE CaptainID = @CaptainID", con);
-            cmd.Parameters.AddWithValue("@CaptainID", captainId);
+            using var cmd = new SqlCommand("SELECT TOP 1 * FROM Teams WHERE CaptainId = @CaptainId", con);
+            cmd.Parameters.AddWithValue("@CaptainId", captainId);
             await con.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
@@ -79,7 +91,7 @@ namespace CricHeroesClone.Repository
                     Id = reader.GetInt32("Id"),
                     Name = reader.GetString("Name"),
                     TournamentId = reader.GetInt32("TournamentId"),
-                    CaptainId = reader.GetInt32("CaptainID")
+                    CaptainId = reader.IsDBNull("CaptainId") ? null : reader.GetInt32("CaptainId")
                 };
             }
             return null;
@@ -99,7 +111,7 @@ namespace CricHeroesClone.Repository
                     Id = reader.GetInt32("Id"),
                     Name = reader.GetString("Name"),
                     TournamentId = reader.GetInt32("TournamentId"),
-                    CaptainId = reader.GetInt32("CaptainID")
+                    CaptainId = reader.IsDBNull("CaptainId") ? null : reader.GetInt32("CaptainId")
                 };
             }
             return null;

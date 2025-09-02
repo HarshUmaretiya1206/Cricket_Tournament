@@ -58,8 +58,7 @@ namespace CricHeroesClone.Controllers
         {
             if (ModelState.IsValid)
             {
-                // For now, we'll just redirect since UpdateAsync is not implemented
-                // TODO: Implement UpdateAsync in TeamRepository
+                await _teamRepository.UpdateAsync(team);
                 return RedirectToAction("Index");
             }
             
@@ -71,6 +70,28 @@ namespace CricHeroesClone.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             await _teamRepository.DeleteAsync(id);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignCaptainByName(int teamId, string captainUsername)
+        {
+            if (string.IsNullOrWhiteSpace(captainUsername))
+            {
+                TempData["Error"] = "Captain username is required.";
+                return RedirectToAction("Index");
+            }
+
+            var userRepo = HttpContext.RequestServices.GetRequiredService<IUserRepository>();
+            var user = await userRepo.GetByUsernameAsync(captainUsername.Trim());
+            if (user == null)
+            {
+                TempData["Error"] = $"User '{captainUsername}' not found.";
+                return RedirectToAction("Index");
+            }
+
+            await _teamRepository.UpdateCaptainAsync(teamId, user.Id);
+            TempData["Message"] = $"Assigned '{user.Username}' as captain.";
             return RedirectToAction("Index");
         }
     }

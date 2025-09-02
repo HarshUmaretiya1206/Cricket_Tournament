@@ -60,8 +60,7 @@ namespace CricHeroesClone.Controllers
         {
             if (ModelState.IsValid)
             {
-                // For now, we'll just redirect since UpdateAsync is not implemented
-                // TODO: Implement UpdateAsync in PlayerRepository
+                await _repo.UpdateAsync(player);
                 return RedirectToAction("Index");
             }
             
