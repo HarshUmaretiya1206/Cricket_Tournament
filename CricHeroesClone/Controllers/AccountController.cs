@@ -49,21 +49,22 @@ namespace CricHeroesClone.Controllers
                         var team = await _teamRepo.GetTeamByCaptainAsync(user.Id);
                         if (team == null)
                         {
-                            // Captain exists but no team assigned
-                            ViewBag.Error = "Captain account found but no team is assigned. Please contact administrator.";
-                            ViewBag.DebugInfo = $"User ID: {user.Id}, Role: {user.Role}, Username: {user.Username}";
-                            return View();
+
+                            // Allow login but warn and proceed without team bindings
+                            TempData["Warning"] = "Captain account has no team assigned yet.";
                         }
-                        
-                        // Store team information in session for captain
-                        HttpContext.Session.SetInt32("TeamId", team.Id);
-                        HttpContext.Session.SetString("TeamName", team.Name);
+                        else
+                        {
+                            // Store team information in session for captain
+                            HttpContext.Session.SetInt32("TeamId", team.Id);
+                            HttpContext.Session.SetString("TeamName", team.Name);
+                        }
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.Error = "Error verifying captain's team. Please contact administrator.";
+                        // Allow login with a warning instead of blocking
+                        TempData["Warning"] = "Could not verify captain's team at the moment.";
                         ViewBag.DebugInfo = $"Error: {ex.Message}\nUser ID: {user.Id}, Role: {user.Role}";
-                        return View();
                     }
                 }
 
@@ -75,7 +76,8 @@ namespace CricHeroesClone.Controllers
                 {
                     "Admin" => RedirectToAction("Dashboard", "Admin"),
                     "Scorer" => RedirectToAction("Dashboard", "Scorer"),
-                    "Captain" => RedirectToAction("Dashboard", "Captain"),
+                    // Redirect captains to Live index for now (no dedicated dashboard)
+                    "Captain" => RedirectToAction("Index", "Live"),
                     "Viewer" => RedirectToAction("Dashboard", "Viewer"),
                     _ => RedirectToAction("Index", "Home")
                 };

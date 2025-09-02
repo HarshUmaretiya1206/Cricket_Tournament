@@ -45,7 +45,15 @@ app.MapControllerRoute(
 using (var scope = app.Services.CreateScope())
 {
     var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-    await users.EnsureDefaultAdminAsync();
+    try
+    {
+        await users.EnsureDefaultAdminAsync();
+    }
+    catch (Exception ex)
+    {
+        // Do not block app startup if database is offline; log and continue
+        Console.WriteLine($"[Startup] Skipped admin seeding: {ex.Message}");
+    }
 }
 
 app.Run();
